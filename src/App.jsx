@@ -758,6 +758,8 @@ export function App() {
                           setIsMonitorSpeaker={micEngine.setIsMonitorSpeaker}
                           isNoiseCutActive={micEngine.isNoiseCutActive}
                           toggleNoiseCut={micEngine.toggleNoiseCut}
+                          keepMusicNormal={micEngine.keepMusicNormal}
+                          toggleKeepMusicNormal={micEngine.toggleKeepMusicNormal}
                         />
                       </div>
                     );
@@ -1138,6 +1140,26 @@ export function App() {
                       }`}
                     >
                       {micEngine.isNoiseCutActive ? 'កាត់ NOISE: ON' : 'OFF'}
+                    </button>
+                  </div>
+
+                  {/* Keep Karaoke Music Normal (No Ducking) Toggle */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800 mt-2">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className={`w-4 h-4 ${micEngine.keepMusicNormal ? 'text-pink-400' : 'text-slate-500'}`} />
+                      <div>
+                        <span className="text-xs font-semibold text-slate-300 block">រក្សាសំឡេងភ្លេងធម្មតា</span>
+                        <span className="text-[10px] text-slate-400">មិនបន្ថយ ឬទម្លាក់ភ្លេងពេលច្រៀង</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={micEngine.toggleKeepMusicNormal}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        micEngine.keepMusicNormal ? 'bg-pink-600 text-white shadow-sm' : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      {micEngine.keepMusicNormal ? 'ភ្លេងធម្មតា: ON' : 'OFF'}
                     </button>
                   </div>
                 </div>

@@ -19,6 +19,7 @@ export function useLiveMicrophone() {
   const [isMonitorSpeaker, setIsMonitorSpeaker] = useState(false); // Hear yourself through headphones
   const [isHeadphonesConnected, setIsHeadphonesConnected] = useState(false);
   const [isNoiseCutActive, setIsNoiseCutActive] = useState(true); // Active Noise Cancellation filter
+  const [keepMusicNormal, setKeepMusicNormal] = useState(true); // Disable browser/OS ducking to keep music at 100% full volume
   const [micError, setMicError] = useState(null);
 
   const audioContextRef = useRef(null);
@@ -34,11 +35,16 @@ export function useLiveMicrophone() {
   const limiterNodeRef = useRef(null);
   const monitorGainNodeRef = useRef(null);
   const isMonitorSpeakerRef = useRef(isMonitorSpeaker);
+  const keepMusicNormalRef = useRef(true);
 
-  // Keep ref in sync
+  // Keep refs in sync
   useEffect(() => {
     isMonitorSpeakerRef.current = isMonitorSpeaker;
   }, [isMonitorSpeaker]);
+
+  useEffect(() => {
+    keepMusicNormalRef.current = keepMusicNormal;
+  }, [keepMusicNormal]);
 
   // Check if headphones or external headset are detected
   const detectHeadphones = useCallback(async () => {
@@ -93,17 +99,33 @@ export function useLiveMicrophone() {
         throw new Error('ឧបករណ៍ ឬ Browser របស់អ្នកមិនគាំទ្រ Microphone ឡើយ។');
       }
 
-      // ULTRA-LOW LATENCY & NOISE SUPPRESSION:
-      // latency: 0 + channelCount: 1 ensures zero hardware delay
-      // noiseSuppression: true + echoCancellation: true cuts ambient room noise & hiss
+      // ULTRA-LOW LATENCY & MUSIC-FIRST CAPTURE:
+      // When keepMusicNormal is true (default):
+      // Disables WebRTC Echo Cancellation & AGC so Windows and Browser NEVER ducks
+      // or lowers the karaoke music when singing into the microphone!
+      const isNormal = keepMusicNormalRef.current;
+      const audioConstraints = isNormal
+        ? {
+            echoCancellation: false,
+            autoGainControl: false,
+            noiseSuppression: false,
+            latency: 0,
+            channelCount: 1,
+            googEchoCancellation: false,
+            googAutoGainControl: false,
+            googNoiseSuppression: false,
+            googHighpassFilter: false,
+          }
+        : {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            latency: 0,
+            channelCount: 1,
+          };
+
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          latency: 0,
-          channelCount: 1,
-        },
+        audio: audioConstraints,
       });
 
       mediaStreamRef.current = stream;
@@ -327,6 +349,21 @@ export function useLiveMicrophone() {
     else if (level === 'boost') setMicVolume(2.5);
   }, []);
 
+  // Toggle Keep Music Normal (No Ducking)
+  const toggleKeepMusicNormal = useCallback(() => {
+    setKeepMusicNormal((prev) => {
+      const next = !prev;
+      keepMusicNormalRef.current = next;
+      if (isMicActive) {
+        stopMic();
+        setTimeout(() => {
+          startMic();
+        }, 120);
+      }
+      return next;
+    });
+  }, [isMicActive, startMic, stopMic]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -356,6 +393,9 @@ export function useLiveMicrophone() {
     toggleHeadphones,
     isNoiseCutActive,
     toggleNoiseCut,
+    keepMusicNormal,
+    setKeepMusicNormal,
+    toggleKeepMusicNormal,
     micError,
     micStream: mediaStreamRef.current,
   };
