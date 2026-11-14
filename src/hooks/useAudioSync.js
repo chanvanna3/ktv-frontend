@@ -73,8 +73,8 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
 
     inst.volume = instVolume;
 
-    let instReady = false;
-    let vocReady = !hasVocals; // If no separate vocalsUrl, vocReady is immediately true!
+    let instReady = inst.readyState >= 2;
+    let vocReady = !hasVocals || voc.readyState >= 2;
 
     const checkBothReady = () => {
       if (instReady && vocReady) {
@@ -93,7 +93,11 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
             const ytTime = player.getCurrentTime ? player.getCurrentTime() : 0;
             inst.currentTime = ytTime;
             if (hasVocals) voc.currentTime = ytTime;
-            inst.play().catch((err) => console.warn('inst.play() error:', err));
+            try { player.mute(); player.setVolume(0); } catch (e) {}
+            inst.play().catch((err) => {
+              console.warn('inst.play() blocked on mobile, unmuting YouTube fallback:', err);
+              try { player.unMute(); player.setVolume(100); } catch (e) {}
+            });
             if (hasVocals) voc.play().catch((err) => console.warn('voc.play() error:', err));
           }
         }
@@ -110,20 +114,18 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
       checkBothReady();
     };
 
-    inst.addEventListener('canplaythrough', handleInstCanPlay, { once: true });
-    if (hasVocals) {
-      voc.addEventListener('canplaythrough', handleVocCanPlay, { once: true });
+    if (!instReady) {
+      inst.addEventListener('canplay', handleInstCanPlay, { once: true });
     }
-
-    // Fallback: in case canplaythrough fired immediately or cached
-    if (inst.readyState >= 3) instReady = true;
-    if (hasVocals && voc.readyState >= 3) vocReady = true;
+    if (hasVocals && !vocReady) {
+      voc.addEventListener('canplay', handleVocCanPlay, { once: true });
+    }
     checkBothReady();
 
     return () => {
-      inst.removeEventListener('canplaythrough', handleInstCanPlay);
+      inst.removeEventListener('canplay', handleInstCanPlay);
       if (hasVocals) {
-        voc.removeEventListener('canplaythrough', handleVocCanPlay);
+        voc.removeEventListener('canplay', handleVocCanPlay);
       }
     };
   }, [instrumentalUrl, vocalsUrl]);
@@ -165,8 +167,18 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
         voc.muted = !isVocalOn;
       }
 
-      const p1 = inst.play();
-      if (p1 && p1.catch) p1.catch((e) => console.warn('Instrumental playback error:', e));
+      if (inst.src && inst.src !== window.location.href && instrumentalUrl) {
+        try { player.mute(); player.setVolume(0); } catch (e) {}
+        const p1 = inst.play();
+        if (p1 && p1.catch) {
+          p1.catch((e) => {
+            console.warn('Instrumental playback blocked on mobile, unmuting YouTube:', e);
+            try { player.unMute(); player.setVolume(100); } catch (err) {}
+          });
+        }
+      } else {
+        try { player.unMute(); player.setVolume(100); } catch (err) {}
+      }
 
       if (hasVocals && voc.src) {
         const p2 = voc.play();
