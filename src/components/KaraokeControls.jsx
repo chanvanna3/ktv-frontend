@@ -27,8 +27,14 @@ import {
   Headphones,
 } from 'lucide-react';
 import { formatTime } from '../utils/youtube';
+import { apiUrl } from '../utils/api';
 
 export function KaraokeControls({
+  audioMode = 'instrumental',
+  setAudioMode,
+  selectedVideoId,
+  videoTitle,
+  stems,
   isVocalOn,
   toggleVocals,
   instVolume,
@@ -238,6 +244,52 @@ export function KaraokeControls({
                 </span>
               </div>
 
+              {/* 3-Mode Audio Selector: Instrumental / Vocals Only / Original */}
+              <div className="space-y-1.5 mb-3">
+                <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">របៀបចាក់សំឡេង (Audio Mode):</span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setAudioMode && setAudioMode('instrumental')}
+                    className={`py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer border ${
+                      audioMode === 'instrumental'
+                        ? 'bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-500/20'
+                        : 'bg-slate-800/80 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Music className="w-3.5 h-3.5" />
+                    <span>ភ្លេងសុទ្ធ</span>
+                    <span className="text-[9px] opacity-80">(No Vocals)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAudioMode && setAudioMode('vocals')}
+                    className={`py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer border ${
+                      audioMode === 'vocals'
+                        ? 'bg-pink-600 border-pink-400 text-white shadow-lg shadow-pink-500/20'
+                        : 'bg-slate-800/80 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                    <span>សំឡេងច្រៀង</span>
+                    <span className="text-[9px] opacity-80">(Vocals Only)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAudioMode && setAudioMode('original')}
+                    className={`py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer border ${
+                      audioMode === 'original'
+                        ? 'bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-500/20'
+                        : 'bg-slate-800/80 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Radio className="w-3.5 h-3.5" />
+                    <span>សំឡេងដើម</span>
+                    <span className="text-[9px] opacity-80">(Original)</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Main Vocal Toggle Button */}
               <button
                 onClick={toggleVocals}
@@ -259,6 +311,39 @@ export function KaraokeControls({
                   </>
                 )}
               </button>
+
+              {/* Dedicated Download Buttons for Separated Tracks */}
+              {selectedVideoId && (
+                <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1.5 mt-3">
+                  <div className="flex items-center justify-between text-[11px] text-slate-300 font-semibold">
+                    <span className="flex items-center gap-1.5 text-cyan-300">
+                      <Download className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>ទាញយកបទចម្រៀង (Download Audio)</span>
+                    </span>
+                    <span className="text-[9px] text-emerald-400 font-mono">WAV</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <a
+                      href={apiUrl(`/api/download/${selectedVideoId}/instrumental`)}
+                      download
+                      className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 text-white text-[10px] font-bold shadow-md shadow-emerald-500/20 transition-all cursor-pointer text-center"
+                      title="ទាញយកភ្លេងសុទ្ធឥតសំឡេងច្រៀង (no_vocals.wav)"
+                    >
+                      <Download className="w-3 h-3 shrink-0" />
+                      <span>ភ្លេងសុទ្ធ (Instrumental)</span>
+                    </a>
+                    <a
+                      href={apiUrl(`/api/download/${selectedVideoId}/vocals`)}
+                      download
+                      className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-pink-600/90 hover:bg-pink-500 text-white text-[10px] font-bold shadow-md shadow-pink-500/20 transition-all cursor-pointer text-center"
+                      title="ទាញយកសំឡេងច្រៀងសុទ្ធ (vocals.wav)"
+                    >
+                      <Download className="w-3 h-3 shrink-0" />
+                      <span>សំឡេងច្រៀង (Vocals)</span>
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {/* Vocal Volume Slider */}
               <div className="mt-3.5 space-y-1.5">

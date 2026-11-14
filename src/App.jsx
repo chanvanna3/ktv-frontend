@@ -186,6 +186,8 @@ export function App() {
 
   // 2. Synchronized audio tracks engine hook (HT-Demucs FT dual tracks)
   const {
+    audioMode,
+    setAudioMode,
     isVocalOn,
     setIsVocalOn,
     toggleVocals,
@@ -398,51 +400,60 @@ export function App() {
     }
   };
 
-  // Instant Auto Vocal Cut: Play immediately without waiting for AI separation
+  // Auto Vocal Cut / Ready to Sing with True Demucs Instrumental
   const handleStartInstantAutoVocalCut = useCallback(async () => {
+    if (!selectedVideoId) return;
     setIsInstantCutLoading(true);
 
-    let audioUrl = directAudioUrlRef.current;
-    // Strict safety check: Discard URL if it does not belong to currently selected video!
-    if (audioUrl && selectedVideoId && !audioUrl.includes(selectedVideoId)) {
-      audioUrl = null;
-    }
-
-    // If audio is not yet ready, poll up to 20 times (~10 seconds)
-    if (!audioUrl && selectedVideoId) {
-      for (let i = 0; i < 20; i++) {
-        try {
-          const res = await fetch(apiUrl(`/api/status/${selectedVideoId}`));
-          if (res.ok) {
-            const data = await res.json();
-            if (data.direct_audio_url) {
-              audioUrl = apiUrl(data.direct_audio_url);
-              directAudioUrlRef.current = audioUrl;
-              break;
-            }
-          }
-        } catch (e) {}
-        await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      const res = await fetch(apiUrl(`/api/status/${selectedVideoId}`));
+      if (res.ok) {
+        const data = await res.json();
+        if (data.instrumental_url) {
+          setStems({
+            instrumentalUrl: apiUrl(data.instrumental_url),
+            vocalsUrl: data.vocals_url ? apiUrl(data.vocals_url) : null,
+          });
+          setIsVocalOn(false);
+          setAudioMode('instrumental');
+          setIsInstantCutLoading(false);
+          setIsProcessing(false);
+          playVideo();
+          return;
+        }
       }
-    }
+    } catch (e) {}
 
-    if (!audioUrl && selectedVideoId) {
-      audioUrl = apiUrl(`/media/${selectedVideoId}/audio.wav`);
-    }
+    // If Demucs separation is still running, poll dynamically until instrumental is ready
+    let attempts = 0;
+    const pollInterval = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch(apiUrl(`/api/status/${selectedVideoId}`));
+        if (res.ok) {
+          const data = await res.json();
+          if (data.instrumental_url) {
+            clearInterval(pollInterval);
+            setIsInstantCutLoading(false);
+            setStems({
+              instrumentalUrl: apiUrl(data.instrumental_url),
+              vocalsUrl: data.vocals_url ? apiUrl(data.vocals_url) : null,
+            });
+            setIsVocalOn(false);
+            setAudioMode('instrumental');
+            setIsProcessing(false);
+            playVideo();
+            return;
+          }
+        }
+      } catch (e) {}
 
-    setIsInstantCutLoading(false);
-
-    if (audioUrl) {
-      setStems({
-        instrumentalUrl: audioUrl,
-        vocalsUrl: null,
-      });
-      studioEngine.setAutoVocalCut(true);
-      setIsVocalOn(false);
-      setIsProcessing(false);
-      playVideo();
-    }
-  }, [selectedVideoId, studioEngine, playVideo]);
+      if (attempts >= 25) {
+        clearInterval(pollInterval);
+        setIsInstantCutLoading(false);
+      }
+    }, 1000);
+  }, [selectedVideoId, playVideo, setAudioMode, setIsVocalOn]);
 
   const isPlaying = playerState === 1; // 1 = YT.PlayerState.PLAYING
 
@@ -736,6 +747,11 @@ export function App() {
                     layerContent = (
                       <div className="w-full">
                         <KaraokeControls
+                          audioMode={audioMode}
+                          setAudioMode={setAudioMode}
+                          selectedVideoId={selectedVideoId}
+                          videoTitle={videoTitle}
+                          stems={stems}
                           isVocalOn={isVocalOn}
                           toggleVocals={toggleVocals}
                           instVolume={instVolume}

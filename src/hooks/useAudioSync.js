@@ -20,8 +20,9 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
   const instAudioRef = useRef(new Audio());
   const vocalAudioRef = useRef(new Audio());
 
-  // Karaoke controls state: Default to VOCALS MUTED (isVocalOn = false)
+  // Karaoke controls state: Default to VOCALS MUTED (isVocalOn = false, audioMode = 'instrumental')
   // so the user immediately gets pure AI Instrumental Karaoke!
+  const [audioMode, setAudioModeState] = useState('instrumental'); // 'instrumental' | 'vocals' | 'original'
   const [isVocalOn, setIsVocalOn] = useState(false);
   const [instVolume, setInstVolume] = useState(0.82); // Balanced instrumental volume so live voice cuts through clearly
   const [vocalVolume, setVocalVolume] = useState(0.70); // 0.0 - 1.0
@@ -245,16 +246,54 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
     return () => clearInterval(intervalId);
   }, [playerRef, audioLoaded]);
 
-  // Vocal toggle handler (Mute / Unmute vocals in real time)
-  const toggleVocals = useCallback(() => {
-    setIsVocalOn((prev) => {
-      const next = !prev;
-      if (vocalAudioRef.current) {
-        vocalAudioRef.current.muted = !next;
+  // Explicit 3-mode selector: 'instrumental' (no vocals) | 'vocals' (isolated vocals) | 'original' (both)
+  const setAudioMode = useCallback((mode) => {
+    setAudioModeState(mode);
+    const inst = instAudioRef.current;
+    const voc = vocalAudioRef.current;
+
+    if (mode === 'instrumental') {
+      if (inst) inst.muted = false;
+      if (voc) voc.muted = true;
+      setIsVocalOn(false);
+    } else if (mode === 'vocals') {
+      if (inst) inst.muted = true;
+      if (voc) {
+        voc.muted = false;
+        voc.volume = vocalVolume;
       }
-      return next;
+      setIsVocalOn(true);
+    } else if (mode === 'original') {
+      if (inst) inst.muted = false;
+      if (voc) {
+        voc.muted = false;
+        voc.volume = vocalVolume;
+      }
+      setIsVocalOn(true);
+    }
+  }, [vocalVolume]);
+
+  // Vocal toggle handler (Toggles between Instrumental and Original)
+  const toggleVocals = useCallback(() => {
+    setAudioModeState((prevMode) => {
+      const nextMode = prevMode === 'instrumental' ? 'original' : 'instrumental';
+      const inst = instAudioRef.current;
+      const voc = vocalAudioRef.current;
+      if (nextMode === 'instrumental') {
+        if (inst) inst.muted = false;
+        if (voc) voc.muted = true;
+        setIsVocalOn(false);
+      } else {
+        if (inst) inst.muted = false;
+        if (voc) {
+          voc.muted = false;
+          voc.volume = vocalVolume;
+        }
+        setIsVocalOn(true);
+      }
+      return nextMode;
     });
-  }, []);
+  }, [vocalVolume]);
 
   const seekAudio = useCallback((seconds) => {
     if (instAudioRef.current) instAudioRef.current.currentTime = seconds;
@@ -281,6 +320,8 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
   }, []);
 
   return {
+    audioMode,
+    setAudioMode,
     isVocalOn,
     setIsVocalOn,
     toggleVocals,
