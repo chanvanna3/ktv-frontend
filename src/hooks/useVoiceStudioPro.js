@@ -27,18 +27,24 @@ export const VOICE_PRESETS = {
       bass: 2.0,
       mid: 0.5,
       treble: 3.5,
+      isReverbOn: true,
       reverbType: 'studio',
-      reverbLevel: 0.35,
+      reverbWet: 0.38,
+      reverbDry: 1.0,
+      reverbRoomSize: 0.9,
+      reverbDecayTime: 1.4,
       isEchoOn: true,
       delayTime: 0.08,
       echoFeedback: 0.20,
       echoLevel: 0.20,
       compThreshold: -16,
       compRatio: 3.0,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -50,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.45,
       pitchShift: 0,
-      noiseGateThreshold: -50,
     },
   },
   studio: {
@@ -52,18 +58,24 @@ export const VOICE_PRESETS = {
       bass: 1.5,
       mid: 1.0,
       treble: 4.0,
+      isReverbOn: true,
       reverbType: 'studio',
-      reverbLevel: 0.28,
+      reverbWet: 0.32,
+      reverbDry: 1.0,
+      reverbRoomSize: 0.8,
+      reverbDecayTime: 1.2,
       isEchoOn: false,
       delayTime: 0.06,
       echoFeedback: 0.15,
       echoLevel: 0.15,
       compThreshold: -18,
       compRatio: 4.0,
+      noiseReductionMode: 'low',
+      noiseGateThreshold: -48,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.55,
       pitchShift: 0,
-      noiseGateThreshold: -48,
     },
   },
   pop: {
@@ -77,18 +89,24 @@ export const VOICE_PRESETS = {
       bass: 0.5,
       mid: 2.0,
       treble: 5.0,
+      isReverbOn: true,
       reverbType: 'hall',
-      reverbLevel: 0.38,
+      reverbWet: 0.45,
+      reverbDry: 1.0,
+      reverbRoomSize: 1.3,
+      reverbDecayTime: 2.2,
       isEchoOn: true,
       delayTime: 0.10,
       echoFeedback: 0.28,
       echoLevel: 0.25,
       compThreshold: -20,
       compRatio: 4.5,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -46,
+      isAgcActive: true,
       isAutoTuneActive: true,
       autoTuneStrength: 0.70,
       pitchShift: 0,
-      noiseGateThreshold: -46,
     },
   },
   romantic: {
@@ -102,18 +120,24 @@ export const VOICE_PRESETS = {
       bass: 3.5,
       mid: 1.2,
       treble: 2.0,
+      isReverbOn: true,
       reverbType: 'room',
-      reverbLevel: 0.42,
+      reverbWet: 0.45,
+      reverbDry: 1.0,
+      reverbRoomSize: 1.1,
+      reverbDecayTime: 1.6,
       isEchoOn: true,
       delayTime: 0.14,
       echoFeedback: 0.30,
       echoLevel: 0.25,
       compThreshold: -15,
       compRatio: 2.8,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -52,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.40,
       pitchShift: 0,
-      noiseGateThreshold: -52,
     },
   },
   concert: {
@@ -127,18 +151,24 @@ export const VOICE_PRESETS = {
       bass: 2.0,
       mid: 1.5,
       treble: 3.0,
+      isReverbOn: true,
       reverbType: 'concert',
-      reverbLevel: 0.55,
+      reverbWet: 0.60,
+      reverbDry: 1.0,
+      reverbRoomSize: 1.8,
+      reverbDecayTime: 3.5,
       isEchoOn: true,
       delayTime: 0.20,
       echoFeedback: 0.38,
       echoLevel: 0.35,
       compThreshold: -16,
       compRatio: 3.5,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -45,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.50,
       pitchShift: 0,
-      noiseGateThreshold: -45,
     },
   },
   deep: {
@@ -152,18 +182,24 @@ export const VOICE_PRESETS = {
       bass: 6.0,
       mid: -1.0,
       treble: 1.0,
+      isReverbOn: true,
       reverbType: 'room',
-      reverbLevel: 0.30,
+      reverbWet: 0.35,
+      reverbDry: 1.0,
+      reverbRoomSize: 0.9,
+      reverbDecayTime: 1.3,
       isEchoOn: true,
       delayTime: 0.08,
       echoFeedback: 0.20,
       echoLevel: 0.18,
       compThreshold: -18,
       compRatio: 3.8,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -50,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.45,
       pitchShift: 0,
-      noiseGateThreshold: -50,
     },
   },
   bright: {
@@ -177,18 +213,24 @@ export const VOICE_PRESETS = {
       bass: -1.5,
       mid: 2.0,
       treble: 6.5,
+      isReverbOn: true,
       reverbType: 'studio',
-      reverbLevel: 0.32,
+      reverbWet: 0.38,
+      reverbDry: 1.0,
+      reverbRoomSize: 0.8,
+      reverbDecayTime: 1.2,
       isEchoOn: true,
       delayTime: 0.07,
       echoFeedback: 0.20,
       echoLevel: 0.20,
       compThreshold: -20,
       compRatio: 4.0,
+      noiseReductionMode: 'medium',
+      noiseGateThreshold: -48,
+      isAgcActive: false,
       isAutoTuneActive: true,
       autoTuneStrength: 0.60,
       pitchShift: 0,
-      noiseGateThreshold: -48,
     },
   },
   autotune: {
@@ -202,71 +244,78 @@ export const VOICE_PRESETS = {
       bass: 1.0,
       mid: 2.5,
       treble: 5.5,
+      isReverbOn: true,
       reverbType: 'hall',
-      reverbLevel: 0.40,
+      reverbWet: 0.50,
+      reverbDry: 1.0,
+      reverbRoomSize: 1.4,
+      reverbDecayTime: 2.5,
       isEchoOn: true,
       delayTime: 0.11,
       echoFeedback: 0.32,
       echoLevel: 0.28,
       compThreshold: -22,
       compRatio: 5.0,
+      noiseReductionMode: 'high',
+      noiseGateThreshold: -46,
+      isAgcActive: true,
       isAutoTuneActive: true,
       autoTuneStrength: 0.95,
       pitchShift: 0,
-      noiseGateThreshold: -46,
     },
   },
 };
 
 /**
  * Creates algorithmic stereo impulse response for ConvolverNode
- * Calibrated specifically with normalize = false so that reverb is warm, lush,
- * spacious, and clearly audible in headphones.
+ * Fully parameterized with type, roomSize, and decayTime.
+ * Uses acoustic exponential decay and early reflection spacing.
  */
-function createReverbImpulse(ctx, type = 'studio') {
+function createReverbImpulse(ctx, type = 'studio', roomSize = 1.0, decayTime = 1.8) {
   const sampleRate = ctx.sampleRate || 44100;
-  let duration = 0.9;
-  let decay = 2.8;
-  let scale = 0.040;
+
+  let typeScale = 0.038;
+  let typeReflectDensity = 0.8;
 
   if (type === 'room') {
-    duration = 1.3;
-    decay = 2.4;
-    scale = 0.038;
+    typeScale = 0.038;
+    typeReflectDensity = 0.7;
   } else if (type === 'hall') {
-    duration = 2.4;
-    decay = 2.0;
-    scale = 0.034;
+    typeScale = 0.034;
+    typeReflectDensity = 0.9;
   } else if (type === 'concert') {
-    duration = 3.6;
-    decay = 1.6;
-    scale = 0.030;
+    typeScale = 0.030;
+    typeReflectDensity = 1.0;
   } else {
     // studio
-    duration = 0.9;
-    decay = 2.8;
-    scale = 0.040;
+    typeScale = 0.040;
+    typeReflectDensity = 0.6;
   }
 
+  const effectiveDecay = Math.max(0.3, Math.min(6.0, decayTime * Math.sqrt(roomSize)));
+  const duration = Math.max(0.5, Math.min(6.0, effectiveDecay * 1.1));
   const length = Math.floor(sampleRate * duration);
+
   const impulse = ctx.createBuffer(2, length, sampleRate);
   const left = impulse.getChannelData(0);
   const right = impulse.getChannelData(1);
 
+  const earlyWindow = Math.floor(sampleRate * Math.min(0.065, 0.025 * roomSize));
+  const decayRate = 6.91 / effectiveDecay;
+
   for (let i = 0; i < length; i++) {
-    const t = i / length;
-    const env = Math.pow(1 - t, decay);
-    // Early discrete reflections in the first 35ms for natural spatial depth
-    const isEarly = i < sampleRate * 0.035;
-    const earlyL = isEarly ? (Math.random() * 2 - 1) * 0.8 : 0;
-    const earlyR = isEarly ? (Math.random() * 2 - 1) * 0.8 : 0;
+    const t = i / sampleRate;
+    const env = Math.exp(-decayRate * t);
 
-    // Decorrelated stereo noise for wide spatial 3D imaging in headphones
-    const noiseL = (Math.random() * 2 - 1) * 0.6;
-    const noiseR = (Math.random() * 2 - 1) * 0.6;
+    const isEarly = i < earlyWindow;
+    const earlyL = isEarly ? (Math.random() * 2 - 1) * typeReflectDensity : 0;
+    const earlyR = isEarly ? (Math.random() * 2 - 1) * typeReflectDensity : 0;
 
-    left[i] = (noiseL + earlyL) * env * scale;
-    right[i] = (noiseR + earlyR) * env * scale;
+    const noiseL = (Math.random() * 2 - 1) * 0.65;
+    const noiseR = (Math.random() * 2 - 1) * 0.65;
+
+    left[i] = (noiseL + earlyL) * env * typeScale;
+    right[i] = (noiseR + earlyR) * env * typeScale;
   }
 
   return impulse;
@@ -286,7 +335,7 @@ function detectPitchAutocorrelation(buffer, sampleRate) {
   const rms = Math.sqrt(sumOfSquares / SIZE);
   if (rms < 0.015) return -1; // Gate out silence/noise
 
-  // Find range of interest (vocal range: 65Hz to 1050Hz)
+  // Vocal range: 65Hz to 1050Hz
   const minPeriod = Math.floor(sampleRate / 1050);
   const maxPeriod = Math.floor(sampleRate / 65);
 
@@ -298,7 +347,6 @@ function detectPitchAutocorrelation(buffer, sampleRate) {
     for (let i = 0; i < SIZE - period; i++) {
       correlation += buffer[i] * buffer[i + period];
     }
-    // Normalize correlation
     correlation = correlation / (SIZE - period);
 
     if (correlation > bestCorrelation) {
@@ -318,7 +366,6 @@ function detectPitchAutocorrelation(buffer, sampleRate) {
  */
 function frequencyToNoteDetails(freq) {
   if (freq <= 0) return null;
-  // A4 = 440Hz = MIDI 69
   const midi = 69 + 12 * Math.log2(freq / 440);
   const roundedMidi = Math.round(midi);
   const noteIndex = ((roundedMidi % 12) + 12) % 12;
@@ -361,67 +408,85 @@ function snapToScale(noteIndex, rootKeyIndex, scaleIntervals) {
 }
 
 /**
- * KTV Voice Studio PRO Hook
+ * KTV Voice Studio PRO Hook - Master Audio Engine
  */
 export function useVoiceStudioPro({ karaokeAudioElement = null }) {
-  // Device Selection
+  // Device Selection (Microphone Inputs)
   const [availableMics, setAvailableMics] = useState([]);
   const [selectedMicId, setSelectedMicId] = useState('');
   const [isMicActive, setIsMicActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [micError, setMicError] = useState(null);
 
-  // Live Input & Output VU levels (0 - 100)
+  // Device Selection (Audio Outputs / Speakers via setSinkId)
+  const [availableOutputs, setAvailableOutputs] = useState([]);
+  const [selectedOutputId, setSelectedOutputId] = useState('');
+
+  // Live Input & Output VU levels (0 - 100) & Peak
   const [inputLevel, setInputLevel] = useState(0);
+  const [inputPeak, setInputPeak] = useState(0);
   const [outputLevel, setOutputLevel] = useState(0);
+  const [isClipping, setIsClipping] = useState(false);
 
   // Active Preset
   const [activePresetId, setActivePresetId] = useState('sweet');
 
-  // 1. Microphone Volume & Direct Monitoring
-  const [micVolume, setMicVolume] = useState(1.8); // 0.0 - 3.0 (180% Studio default)
-  const [isMonitoring, setIsMonitoring] = useState(true); // Hear processed voice
-  const [micChannelMode, setMicChannelMode] = useState('both'); // 'both' (L+R dual) | 'left' (Ch 1) | 'right' (Ch 2)
-  const [keepMusicNormal, setKeepMusicNormal] = useState(true); // No ducking of music
+  // MODULE 3: Microphone Boost & Dynamic Levels
+  const [micVolume, setMicVolume] = useState(1.8); // 0.0 - 3.0 (0% - 300% Boost)
+  const [micPreampBoost, setMicPreampBoost] = useState(1.5); // 1.0 - 3.0 (Preamp Gain)
+  const [isAgcActive, setIsAgcActive] = useState(false); // Auto Gain Control
+  const [isMonitoring, setIsMonitoring] = useState(true); // Direct Monitoring (Headphones/Speakers)
+  const [micChannelMode, setMicChannelMode] = useState('both'); // 'both' (L+R Dual) | 'left' (Ch 1) | 'right' (Ch 2)
+  const [keepMusicNormal, setKeepMusicNormal] = useState(true); // Disable browser ducking
 
-  // 2. 3-Band Studio EQ (-15dB to +15dB)
+  // MODULE 2: AI Multi-Stage Noise Reduction & Noise Gate
+  const [noiseReductionMode, setNoiseReductionMode] = useState('medium'); // 'off' | 'low' | 'medium' | 'high'
+  const [noiseGateThreshold, setNoiseGateThreshold] = useState(-48); // -65dB to -30dB
+  const [isNoiseGateOpen, setIsNoiseGateOpen] = useState(true); // Real-time gate indicator
+
+  // MODULE 1: Reverb Engine (ConvolverNode)
+  const [isReverbOn, setIsReverbOn] = useState(true); // Reverb ON/OFF switch
+  const [reverbType, setReverbType] = useState('studio'); // studio | hall | room | concert
+  const [reverbWet, setReverbWet] = useState(0.40); // 0.0 - 1.0 (Wet amount)
+  const [reverbDry, setReverbDry] = useState(1.0); // 0.0 - 1.0 (Dry amount)
+  const [reverbRoomSize, setReverbRoomSize] = useState(1.0); // 0.2 - 2.0x (Room Size)
+  const [reverbDecayTime, setReverbDecayTime] = useState(1.8); // 0.4s - 5.0s (Decay Time)
+
+  // 3-Band Studio EQ (-15dB to +15dB)
   const [eqBass, setEqBass] = useState(2.0); // 120Hz Low-shelf
   const [eqMid, setEqMid] = useState(0.5); // 1500Hz Peaking
   const [eqTreble, setEqTreble] = useState(3.5); // 6500Hz High-shelf
 
-  // 3. Studio Compressor
-  const [compThreshold, setCompThreshold] = useState(-16); // -40dB to 0dB
+  // Vocal Dynamics Compressor
+  const [compThreshold, setCompThreshold] = useState(-18); // -40dB to 0dB
   const [compRatio, setCompRatio] = useState(3.5); // 1 to 12
 
-  // 4. Noise Suppression & Noise Gate
-  const [isNoiseCutActive, setIsNoiseCutActive] = useState(true);
-  const [noiseGateThreshold, setNoiseGateThreshold] = useState(-50); // -60dB to -30dB
-
-  // 5. Studio Reverb
-  const [reverbType, setReverbType] = useState('studio'); // studio | hall | room | concert
-  const [reverbLevel, setReverbLevel] = useState(0.35); // 0.0 - 1.0 (wetness)
-
-  // 6. Studio Echo / Delay
+  // Studio Echo / Feedback Delay
   const [isEchoOn, setIsEchoOn] = useState(true);
   const [delayTime, setDelayTime] = useState(0.08); // 0.04s - 0.5s
   const [echoFeedback, setEchoFeedback] = useState(0.20); // 0.0 - 0.65
   const [echoLevel, setEchoLevel] = useState(0.20); // 0.0 - 0.70
 
-  // 7. Pitch Control & AI Auto-Tune
+  // AI Auto-Tune & Pitch Control
   const [pitchShift, setPitchShift] = useState(0); // -12 to +12 semitones
   const [isAutoTuneActive, setIsAutoTuneActive] = useState(true);
   const [autoTuneStrength, setAutoTuneStrength] = useState(0.50); // 0.0 - 1.0
-  const [selectedKey, setSelectedKey] = useState('C'); // C, C#, D...
-  const [selectedScale, setSelectedScale] = useState('khmerPentatonic'); // chromatic, major, minor, khmerPentatonic...
-  const [detectedPitch, setDetectedPitch] = useState(null); // { freq, noteName, centsOff }
+  const [selectedKey, setSelectedKey] = useState('C');
+  const [selectedScale, setSelectedScale] = useState('khmerPentatonic');
+  const [detectedPitch, setDetectedPitch] = useState(null);
 
-  // 8. Karaoke Vocal & Music Balance
-  const [vocalMusicBalance, setVocalMusicBalance] = useState(50); // 0 (All Music) - 50 (50/50) - 100 (All Mic)
+  // Vocal & Karaoke Music Balance
+  const [vocalMusicBalance, setVocalMusicBalance] = useState(50); // 0 (Music) - 100 (Vocal)
 
-  // 9. Performance Recording
+  // Performance Recording
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
+
+  // Interactive 3-Second Microphone Test Tool
+  const [micTestPhase, setMicTestPhase] = useState('idle'); // 'idle' | 'recording' | 'playing' | 'done'
+  const [micTestCountdown, setMicTestCountdown] = useState(3);
+  const [testAudioUrl, setTestAudioUrl] = useState(null);
 
   // Audio Context & Graph Node References
   const audioCtxRef = useRef(null);
@@ -433,26 +498,27 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   // Processing chain refs
   const inputAnalyserRef = useRef(null);
   const outputAnalyserRef = useRef(null);
+  const preampGainRef = useRef(null);
+  const agcGainRef = useRef(null);
   const gateGainRef = useRef(null);
+  const gateHoldUntilRef = useRef(0);
   const highpassRef = useRef(null);
   const lowpassRef = useRef(null);
+  const humNotch50Ref = useRef(null);
+  const humNotch60Ref = useRef(null);
   const bassFilterRef = useRef(null);
   const midFilterRef = useRef(null);
   const trebleFilterRef = useRef(null);
   const compressorRef = useRef(null);
   const micGainRef = useRef(null);
   const monitorGainRef = useRef(null);
-
-  // Pitch Shift Nodes (Dual-delay Doppler Shifter)
-  const pitchDelay1Ref = useRef(null);
-  const pitchDelay2Ref = useRef(null);
-  const pitchGain1Ref = useRef(null);
-  const pitchGain2Ref = useRef(null);
-  const pitchModTimerRef = useRef(null);
+  const masterLimiterRef = useRef(null);
 
   // Reverb nodes
   const convolverRef = useRef(null);
   const reverbWetGainRef = useRef(null);
+  const reverbDryGainRef = useRef(null);
+  const reverbToneRef = useRef(null);
 
   // Echo nodes
   const delayNodeRef = useRef(null);
@@ -463,23 +529,29 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   const karaokeSourceRef = useRef(null);
   const karaokeMusicGainRef = useRef(null);
 
-  // Master & Recording Destination
-  const masterDestRef = useRef(null);
+  // Recording Destination
   const recordDestRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
   const recordTimerRef = useRef(null);
 
+  // Mic Test Refs
+  const testRecorderRef = useRef(null);
+  const testTimerRef = useRef(null);
+  const testAudioElRef = useRef(null);
+
   // Animation / Meter loop ref
   const animFrameRef = useRef(null);
 
   /**
-   * Enumerate connected microphone devices
+   * Enumerate connected microphone and output devices
    */
-  const refreshMics = useCallback(async () => {
+  const refreshDevices = useCallback(async () => {
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
       const devices = await navigator.mediaDevices.enumerateDevices();
+
+      // Microphones
       const mics = devices
         .filter((d) => d.kind === 'audioinput')
         .map((d, index) => ({
@@ -490,34 +562,71 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       if (mics.length > 0 && !selectedMicId) {
         setSelectedMicId(mics[0].deviceId);
       }
+
+      // Output Speakers / Headphones (where supported)
+      const outputs = devices
+        .filter((d) => d.kind === 'audiooutput')
+        .map((d, index) => ({
+          deviceId: d.deviceId,
+          label: d.label || `Speaker / Headphone ${index + 1}`,
+        }));
+      setAvailableOutputs(outputs);
+      if (outputs.length > 0 && !selectedOutputId) {
+        setSelectedOutputId(outputs[0].deviceId);
+      }
     } catch (e) {
-      console.warn('Microphone enumeration warning:', e);
+      console.warn('Device enumeration warning:', e);
     }
-  }, [selectedMicId]);
+  }, [selectedMicId, selectedOutputId]);
 
   useEffect(() => {
-    refreshMics();
+    refreshDevices();
     if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
-      navigator.mediaDevices.addEventListener('devicechange', refreshMics);
+      navigator.mediaDevices.addEventListener('devicechange', refreshDevices);
       return () => {
-        navigator.mediaDevices.removeEventListener('devicechange', refreshMics);
+        navigator.mediaDevices.removeEventListener('devicechange', refreshDevices);
       };
     }
-  }, [refreshMics]);
+  }, [refreshDevices]);
 
   /**
-   * Initialize or update Reverb Buffer
+   * Change Audio Output Device (setSinkId)
    */
-  const updateReverbBuffer = useCallback((ctx, type) => {
+  const changeOutputDevice = useCallback(
+    async (newOutputId) => {
+      setSelectedOutputId(newOutputId);
+      try {
+        if (audioCtxRef.current && typeof audioCtxRef.current.setSinkId === 'function') {
+          await audioCtxRef.current.setSinkId(newOutputId);
+        }
+        if (karaokeAudioElement && typeof karaokeAudioElement.setSinkId === 'function') {
+          await karaokeAudioElement.setSinkId(newOutputId);
+        }
+      } catch (e) {
+        console.warn('Audio output device selection warning:', e);
+      }
+    },
+    [karaokeAudioElement]
+  );
+
+  /**
+   * Initialize or update Reverb Buffer dynamically
+   */
+  const updateReverbBuffer = useCallback((ctx, type, roomSize, decayTime) => {
     if (!ctx || !convolverRef.current) return;
     try {
-      const impulse = createReverbImpulse(ctx, type);
-      convolverRef.current.normalize = false; // CRITICAL: prevent Web Audio from crushing reverb level!
+      const impulse = createReverbImpulse(
+        ctx,
+        type || reverbType,
+        roomSize !== undefined ? roomSize : reverbRoomSize,
+        decayTime !== undefined ? decayTime : reverbDecayTime
+      );
+      convolverRef.current.normalize = false; // Prevent Web Audio from crushing reverb level!
       convolverRef.current.buffer = impulse;
     } catch (e) {
       console.warn('Reverb buffer build warning:', e);
     }
-  }, []);
+  }, [reverbType, reverbRoomSize, reverbDecayTime]);
 
   /**
    * Start Microphone & Initialize Studio Web Audio Graph
@@ -537,8 +646,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
 
       const devId = customDeviceId || selectedMicId;
 
-      // Audio Constraints: Disable browser ducking so karaoke music stays at 100% full volume!
-      // Request stereo channelCount: 2 so multi-channel interfaces and USB mics expose both channels cleanly
+      // Request 2 channels so multi-channel audio interfaces & USB mics expose both channels cleanly
       const audioConstraints = {
         deviceId: devId ? { exact: devId } : undefined,
         echoCancellation: false,
@@ -565,15 +673,18 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       }
       audioCtxRef.current = ctx;
 
-      // 1. Source & Channel Splitter (Fixes "mic heard in only one side/ear" bug!)
+      // Apply output sink if selected
+      if (selectedOutputId && typeof ctx.setSinkId === 'function') {
+        ctx.setSinkId(selectedOutputId).catch(() => {});
+      }
+
+      // 1. Source & Channel Splitter (Ensures mic audio is heard in BOTH ears!)
       const source = ctx.createMediaStreamSource(stream);
       sourceNodeRef.current = source;
 
-      // Create a ChannelSplitter to extract individual input channels
       const inputSplitter = ctx.createChannelSplitter(2);
       inputSplitterRef.current = inputSplitter;
 
-      // Mono Input Summer: guarantees vocal signal is centered and heard in BOTH ears
       const monoInputGain = ctx.createGain();
       monoInputGainRef.current = monoInputGain;
 
@@ -589,31 +700,69 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
         inputSplitter.connect(monoInputGain, 1);
       }
 
+      // Live Input Analyser (Peak & RMS)
       const inAnalyser = ctx.createAnalyser();
       inAnalyser.fftSize = 512;
-      inAnalyser.smoothingTimeConstant = 0.3;
+      inAnalyser.smoothingTimeConstant = 0.2;
       inputAnalyserRef.current = inAnalyser;
       monoInputGain.connect(inAnalyser);
 
-      // 2. Noise Gate Gain
+      // 2. Pre-Amp Input Gain Boost & AGC
+      const preampGain = ctx.createGain();
+      preampGain.gain.value = micPreampBoost;
+      preampGainRef.current = preampGain;
+      monoInputGain.connect(preampGain);
+
+      const agcGain = ctx.createGain();
+      agcGain.gain.value = 1.0;
+      agcGainRef.current = agcGain;
+      preampGain.connect(agcGain);
+
+      // 3. Multi-Stage AI Noise Reduction Filters
+      // Subsonic anti-rumble highpass
+      const highpass = ctx.createBiquadFilter();
+      highpass.type = 'highpass';
+      const hpFreq =
+        noiseReductionMode === 'off' ? 20 :
+        noiseReductionMode === 'low' ? 70 :
+        noiseReductionMode === 'high' ? 125 : 95;
+      highpass.frequency.value = hpFreq;
+      highpassRef.current = highpass;
+
+      // 50Hz electrical mains hum notch
+      const notch50 = ctx.createBiquadFilter();
+      notch50.type = 'notch';
+      notch50.frequency.value = 50;
+      notch50.Q.value = noiseReductionMode === 'off' ? 0.001 : 4.0;
+      humNotch50Ref.current = notch50;
+
+      // 60Hz electrical mains hum notch
+      const notch60 = ctx.createBiquadFilter();
+      notch60.type = 'notch';
+      notch60.frequency.value = 60;
+      notch60.Q.value = noiseReductionMode === 'off' ? 0.001 : 4.0;
+      humNotch60Ref.current = notch60;
+
+      // Anti-hiss lowpass
+      const lowpass = ctx.createBiquadFilter();
+      lowpass.type = 'lowpass';
+      const lpFreq =
+        noiseReductionMode === 'off' ? 22000 :
+        noiseReductionMode === 'low' ? 18000 :
+        noiseReductionMode === 'high' ? 10500 : 13500;
+      lowpass.frequency.value = lpFreq;
+      lowpassRef.current = lowpass;
+
+      // Dynamic Noise Gate Gain Node
       const gateGain = ctx.createGain();
       gateGain.gain.value = 1.0;
       gateGainRef.current = gateGain;
-      monoInputGain.connect(gateGain);
 
-      // 3. Pre-filters (Anti-Rumble Highpass & Anti-Hiss Lowpass)
-      const highpass = ctx.createBiquadFilter();
-      highpass.type = 'highpass';
-      highpass.frequency.value = isNoiseCutActive ? 85 : 30;
-      highpassRef.current = highpass;
-
-      const lowpass = ctx.createBiquadFilter();
-      lowpass.type = 'lowpass';
-      lowpass.frequency.value = isNoiseCutActive ? 11500 : 20000;
-      lowpassRef.current = lowpass;
-
-      gateGain.connect(highpass);
-      highpass.connect(lowpass);
+      agcGain.connect(highpass);
+      highpass.connect(notch50);
+      notch50.connect(notch60);
+      notch60.connect(lowpass);
+      lowpass.connect(gateGain);
 
       // 4. 3-Band Equalizer (Bass, Mid, Treble)
       const bassFilter = ctx.createBiquadFilter();
@@ -635,14 +784,14 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       trebleFilter.gain.value = eqTreble;
       trebleFilterRef.current = trebleFilter;
 
-      lowpass.connect(bassFilter);
+      gateGain.connect(bassFilter);
       bassFilter.connect(midFilter);
       midFilter.connect(trebleFilter);
 
-      // 5. Studio Vocal Compressor
+      // 5. Studio Vocal Dynamics Compressor
       const compressor = ctx.createDynamicsCompressor();
       compressor.threshold.value = compThreshold;
-      compressor.knee.value = 20;
+      compressor.knee.value = 18;
       compressor.ratio.value = compRatio;
       compressor.attack.value = 0.003;
       compressor.release.value = 0.08;
@@ -650,39 +799,45 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
 
       trebleFilter.connect(compressor);
 
-      // 6. Vocal Pre-amp Gain
+      // 6. Vocal Pre-amp Volume Gain
       const micGain = ctx.createGain();
       micGain.gain.value = isMuted ? 0 : micVolume;
       micGainRef.current = micGain;
       compressor.connect(micGain);
 
-      // 7. Studio Reverb (Convolver with normalize = false and calibrated impulse response)
+      // 7. Studio Reverb (ConvolverNode with full Wet/Dry, Room Size, Decay Time)
       const convolver = ctx.createConvolver();
-      convolver.normalize = false; // MUST be set before buffer assignment!
+      convolver.normalize = false; // Prevent Web Audio equal-power attenuation!
       convolverRef.current = convolver;
-      updateReverbBuffer(ctx, reverbType);
+      updateReverbBuffer(ctx, reverbType, reverbRoomSize, reverbDecayTime);
 
-      // Post-reverb tone filter for smooth studio ambiance
       const reverbTone = ctx.createBiquadFilter();
       reverbTone.type = 'lowpass';
       reverbTone.frequency.value = 6500;
+      reverbToneRef.current = reverbTone;
 
       const reverbWetGain = ctx.createGain();
-      reverbWetGain.gain.value = reverbLevel * 1.6;
+      reverbWetGain.gain.value = isReverbOn ? reverbWet * 1.5 : 0.0;
       reverbWetGainRef.current = reverbWetGain;
 
       micGain.connect(convolver);
       convolver.connect(reverbTone);
       reverbTone.connect(reverbWetGain);
 
-      // 8. Studio Echo / Feedback Delay (Analog Tape Echo style with high-damping)
+      // Dedicated Dry Gain Node
+      const reverbDryGain = ctx.createGain();
+      reverbDryGain.gain.value = reverbDry;
+      reverbDryGainRef.current = reverbDryGain;
+      micGain.connect(reverbDryGain);
+
+      // 8. Studio Echo / Feedback Delay (Analog Tape Echo)
       const delayNode = ctx.createDelay(1.0);
       delayNode.delayTime.value = delayTime;
       delayNodeRef.current = delayNode;
 
       const echoDamping = ctx.createBiquadFilter();
       echoDamping.type = 'lowpass';
-      echoDamping.frequency.value = 4500; // Warm tape damping on repeats
+      echoDamping.frequency.value = 4500;
 
       const feedbackGain = ctx.createGain();
       feedbackGain.gain.value = isEchoOn ? echoFeedback : 0;
@@ -701,8 +856,8 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       // 9. Mix Vocal Bus with Guaranteed Stereo Centering (L + R)
       // Merger takes mono dry vocal and copies it to BOTH Left (0) and Right (1)
       const dryStereoMerger = ctx.createChannelMerger(2);
-      micGain.connect(dryStereoMerger, 0, 0); // Dry vocal to Left Ear
-      micGain.connect(dryStereoMerger, 0, 1); // Dry vocal to Right Ear
+      reverbDryGain.connect(dryStereoMerger, 0, 0); // Dry vocal to Left Ear
+      reverbDryGain.connect(dryStereoMerger, 0, 1); // Dry vocal to Right Ear
 
       // Merger takes mono echo and copies it to BOTH Left (0) and Right (1)
       const echoStereoMerger = ctx.createChannelMerger(2);
@@ -715,7 +870,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       vocalBus.channelCountMode = 'explicit';
       vocalBus.channelInterpretation = 'speakers';
 
-      // Connect dry voice (centered), echo (centered), and reverb (decorrelated stereo space) into vocal bus:
+      // Connect dry voice, echo, and stereo reverb into vocal bus:
       dryStereoMerger.connect(vocalBus);
       echoStereoMerger.connect(vocalBus);
       reverbWetGain.connect(vocalBus); // Full 2-channel stereo reverb in both ears!
@@ -733,13 +888,14 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       outputAnalyserRef.current = outAnalyser;
       monitorGain.connect(outAnalyser);
 
-      // Master output limiter (prevents speaker popping / ear fatigue)
+      // Master Brickwall Peak Limiter (Guarantees ZERO clipping or speaker popping)
       const masterLimiter = ctx.createDynamicsCompressor();
-      masterLimiter.threshold.value = -3;
-      masterLimiter.knee.value = 6;
-      masterLimiter.ratio.value = 10;
-      masterLimiter.attack.value = 0.001;
-      masterLimiter.release.value = 0.05;
+      masterLimiter.threshold.value = -1.0;
+      masterLimiter.knee.value = 4;
+      masterLimiter.ratio.value = 20;
+      masterLimiter.attack.value = 0.0008;
+      masterLimiter.release.value = 0.04;
+      masterLimiterRef.current = masterLimiter;
 
       outAnalyser.connect(masterLimiter);
       masterLimiter.connect(ctx.destination);
@@ -768,7 +924,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       }
 
       setIsMicActive(true);
-      refreshMics();
+      refreshDevices();
     } catch (err) {
       console.error('KTV Voice Studio Mic activation error:', err);
       setMicError(err.message || 'មិនអាចបើក Microphone បានទេ។');
@@ -776,7 +932,10 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     }
   }, [
     selectedMicId,
+    selectedOutputId,
     micChannelMode,
+    micPreampBoost,
+    noiseReductionMode,
     eqBass,
     eqMid,
     eqTreble,
@@ -784,9 +943,12 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     compRatio,
     micVolume,
     isMuted,
-    isNoiseCutActive,
+    isReverbOn,
     reverbType,
-    reverbLevel,
+    reverbWet,
+    reverbDry,
+    reverbRoomSize,
+    reverbDecayTime,
     isEchoOn,
     delayTime,
     echoFeedback,
@@ -794,7 +956,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     isMonitoring,
     karaokeAudioElement,
     updateReverbBuffer,
-    refreshMics,
+    refreshDevices,
   ]);
 
   /**
@@ -815,7 +977,9 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     }
     setIsMicActive(false);
     setInputLevel(0);
+    setInputPeak(0);
     setOutputLevel(0);
+    setIsClipping(false);
     setDetectedPitch(null);
   }, []);
 
@@ -858,7 +1022,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   }, [micVolume]);
 
   /**
-   * Toggle Headphone / Speaker Monitoring
+   * Toggle Headphone / Speaker Direct Monitoring
    */
   const toggleMonitoring = useCallback(() => {
     setIsMonitoring((prev) => {
@@ -872,15 +1036,96 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   }, []);
 
   /**
+   * Quick Mic Boost Preset (normal: 100%, full: 180%, boost: 250%)
+   */
+  const setMicBoostPreset = useCallback((preset) => {
+    if (preset === 'normal') {
+      setMicVolume(1.0);
+      setMicPreampBoost(1.0);
+    } else if (preset === 'boost') {
+      setMicVolume(2.5);
+      setMicPreampBoost(2.0);
+    } else {
+      // 'full'
+      setMicVolume(1.8);
+      setMicPreampBoost(1.5);
+    }
+  }, []);
+
+  /**
+   * Quick Echo Preset (room, karaoke, concert, space)
+   */
+  const setEchoPreset = useCallback((preset) => {
+    setIsEchoOn(true);
+    if (preset === 'room') {
+      setDelayTime(0.12);
+      setEchoFeedback(0.20);
+      setEchoLevel(0.25);
+    } else if (preset === 'concert') {
+      setDelayTime(0.35);
+      setEchoFeedback(0.35);
+      setEchoLevel(0.55);
+    } else if (preset === 'space') {
+      setDelayTime(0.48);
+      setEchoFeedback(0.55);
+      setEchoLevel(0.70);
+    } else {
+      // karaoke default
+      setDelayTime(0.22);
+      setEchoFeedback(0.28);
+      setEchoLevel(0.40);
+    }
+  }, []);
+
+  /**
+   * Toggle Reverb ON/OFF without restarting mic
+   */
+  const toggleReverb = useCallback(() => {
+    setIsReverbOn((prev) => {
+      const next = !prev;
+      if (reverbWetGainRef.current && audioCtxRef.current) {
+        const now = audioCtxRef.current.currentTime;
+        reverbWetGainRef.current.gain.setTargetAtTime(next ? reverbWet * 1.5 : 0.0, now, 0.02);
+      }
+      return next;
+    });
+  }, [reverbWet]);
+
+  /**
    * Dynamic Real-time Parameter Updates
    */
-  // Mic Volume
+  // Mic Volume & Pre-Amp Boost
   useEffect(() => {
     if (micGainRef.current && audioCtxRef.current) {
       const now = audioCtxRef.current.currentTime;
       micGainRef.current.gain.setTargetAtTime(isMuted ? 0 : micVolume, now, 0.02);
     }
   }, [micVolume, isMuted]);
+
+  useEffect(() => {
+    if (preampGainRef.current && audioCtxRef.current) {
+      preampGainRef.current.gain.setTargetAtTime(micPreampBoost, audioCtxRef.current.currentTime, 0.02);
+    }
+  }, [micPreampBoost]);
+
+  // Dynamic Microphone Channel Routing (Both L+R, Left only, Right only)
+  useEffect(() => {
+    if (inputSplitterRef.current && monoInputGainRef.current) {
+      try {
+        inputSplitterRef.current.disconnect();
+        if (micChannelMode === 'right') {
+          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
+        } else if (micChannelMode === 'left') {
+          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
+        } else {
+          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
+          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
+        }
+      } catch (e) {
+        console.warn('Channel routing update warning:', e);
+      }
+    }
+  }, [micChannelMode]);
 
   // 3-Band EQ
   useEffect(() => {
@@ -910,50 +1155,76 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     }
   }, [compThreshold, compRatio]);
 
-  // Noise Cut Filters
+  // AI Noise Reduction Filters (Subsonic highpass, hum notches, ultrasonic lowpass)
   useEffect(() => {
-    if (highpassRef.current && lowpassRef.current && audioCtxRef.current) {
-      const now = audioCtxRef.current.currentTime;
-      highpassRef.current.frequency.setTargetAtTime(isNoiseCutActive ? 85 : 30, now, 0.02);
-      lowpassRef.current.frequency.setTargetAtTime(isNoiseCutActive ? 11500 : 20000, now, 0.02);
-    }
-  }, [isNoiseCutActive]);
+    if (!audioCtxRef.current) return;
+    const now = audioCtxRef.current.currentTime;
 
-  // Reverb (Calibrated studio level so it's unmistakable in headphones)
+    if (highpassRef.current) {
+      const hpFreq =
+        noiseReductionMode === 'off' ? 20 :
+        noiseReductionMode === 'low' ? 70 :
+        noiseReductionMode === 'high' ? 125 : 95;
+      highpassRef.current.frequency.setTargetAtTime(hpFreq, now, 0.02);
+    }
+
+    if (lowpassRef.current) {
+      const lpFreq =
+        noiseReductionMode === 'off' ? 22000 :
+        noiseReductionMode === 'low' ? 18000 :
+        noiseReductionMode === 'high' ? 10500 : 13500;
+      lowpassRef.current.frequency.setTargetAtTime(lpFreq, now, 0.02);
+    }
+
+    if (humNotch50Ref.current && humNotch60Ref.current) {
+      const qVal = noiseReductionMode === 'off' ? 0.001 : 4.0;
+      humNotch50Ref.current.Q.setTargetAtTime(qVal, now, 0.02);
+      humNotch60Ref.current.Q.setTargetAtTime(qVal, now, 0.02);
+    }
+  }, [noiseReductionMode]);
+
+  // Reverb Wet/Dry & Real-time Impulse Updates
   useEffect(() => {
     if (reverbWetGainRef.current && audioCtxRef.current) {
-      reverbWetGainRef.current.gain.setTargetAtTime(reverbLevel * 1.6, audioCtxRef.current.currentTime, 0.02);
+      const now = audioCtxRef.current.currentTime;
+      reverbWetGainRef.current.gain.setTargetAtTime(isReverbOn ? reverbWet * 1.5 : 0.0, now, 0.02);
     }
-  }, [reverbLevel]);
+  }, [isReverbOn, reverbWet]);
 
-  // Dynamic Microphone Channel Routing (Ensures both ears receive sound seamlessly)
   useEffect(() => {
-    if (inputSplitterRef.current && monoInputGainRef.current) {
-      try {
-        inputSplitterRef.current.disconnect();
-        if (micChannelMode === 'right') {
-          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
-        } else if (micChannelMode === 'left') {
-          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
-        } else {
-          // both (Default: combine Left & Right so whatever channel has audio is heard centered in both ears!)
-          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
-          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
-        }
-      } catch (e) {
-        console.warn('Channel routing update warning:', e);
-      }
+    if (reverbDryGainRef.current && audioCtxRef.current) {
+      reverbDryGainRef.current.gain.setTargetAtTime(reverbDry, audioCtxRef.current.currentTime, 0.02);
     }
-  }, [micChannelMode]);
+  }, [reverbDry]);
 
   const changeReverbType = useCallback(
     (type) => {
       setReverbType(type);
       if (audioCtxRef.current) {
-        updateReverbBuffer(audioCtxRef.current, type);
+        updateReverbBuffer(audioCtxRef.current, type, reverbRoomSize, reverbDecayTime);
       }
     },
-    [updateReverbBuffer]
+    [updateReverbBuffer, reverbRoomSize, reverbDecayTime]
+  );
+
+  const changeReverbRoomSize = useCallback(
+    (size) => {
+      setReverbRoomSize(size);
+      if (audioCtxRef.current) {
+        updateReverbBuffer(audioCtxRef.current, reverbType, size, reverbDecayTime);
+      }
+    },
+    [updateReverbBuffer, reverbType, reverbDecayTime]
+  );
+
+  const changeReverbDecayTime = useCallback(
+    (decay) => {
+      setReverbDecayTime(decay);
+      if (audioCtxRef.current) {
+        updateReverbBuffer(audioCtxRef.current, reverbType, reverbRoomSize, decay);
+      }
+    },
+    [updateReverbBuffer, reverbType, reverbRoomSize]
   );
 
   // Echo / Delay
@@ -976,7 +1247,6 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   useEffect(() => {
     if (audioCtxRef.current) {
       const now = audioCtxRef.current.currentTime;
-      // Linear crossfade
       const musicFactor = Math.max(0, (100 - vocalMusicBalance) / 50);
       const micFactor = Math.max(0, vocalMusicBalance / 50);
 
@@ -992,35 +1262,54 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   /**
    * Apply 1-Click Professional Voice Preset
    */
-  const applyPreset = useCallback((presetId) => {
-    const preset = VOICE_PRESETS[presetId];
-    if (!preset) return;
-    setActivePresetId(presetId);
-    const fx = preset.effects;
+  const applyPreset = useCallback(
+    (presetId) => {
+      const preset = VOICE_PRESETS[presetId];
+      if (!preset) return;
+      setActivePresetId(presetId);
+      const fx = preset.effects;
 
-    setEqBass(fx.bass);
-    setEqMid(fx.mid);
-    setEqTreble(fx.treble);
-    setReverbType(fx.reverbType);
-    setReverbLevel(fx.reverbLevel);
-    setIsEchoOn(fx.isEchoOn);
-    setDelayTime(fx.delayTime);
-    setEchoFeedback(fx.echoFeedback);
-    setEchoLevel(fx.echoLevel);
-    setCompThreshold(fx.compThreshold);
-    setCompRatio(fx.compRatio);
-    setIsAutoTuneActive(fx.isAutoTuneActive);
-    setAutoTuneStrength(fx.autoTuneStrength);
-    setPitchShift(fx.pitchShift);
-    setNoiseGateThreshold(fx.noiseGateThreshold);
+      setEqBass(fx.bass);
+      setEqMid(fx.mid);
+      setEqTreble(fx.treble);
 
-    if (audioCtxRef.current) {
-      updateReverbBuffer(audioCtxRef.current, fx.reverbType);
-    }
-  }, [updateReverbBuffer]);
+      setIsReverbOn(fx.isReverbOn !== undefined ? fx.isReverbOn : true);
+      setReverbType(fx.reverbType);
+      setReverbWet(fx.reverbWet !== undefined ? fx.reverbWet : fx.reverbLevel || 0.40);
+      setReverbDry(fx.reverbDry !== undefined ? fx.reverbDry : 1.0);
+      setReverbRoomSize(fx.reverbRoomSize !== undefined ? fx.reverbRoomSize : 1.0);
+      setReverbDecayTime(fx.reverbDecayTime !== undefined ? fx.reverbDecayTime : 1.8);
+
+      setIsEchoOn(fx.isEchoOn);
+      setDelayTime(fx.delayTime);
+      setEchoFeedback(fx.echoFeedback);
+      setEchoLevel(fx.echoLevel);
+
+      setCompThreshold(fx.compThreshold);
+      setCompRatio(fx.compRatio);
+
+      setNoiseReductionMode(fx.noiseReductionMode || 'medium');
+      setNoiseGateThreshold(fx.noiseGateThreshold || -48);
+      setIsAgcActive(fx.isAgcActive || false);
+
+      setIsAutoTuneActive(fx.isAutoTuneActive);
+      setAutoTuneStrength(fx.autoTuneStrength);
+      setPitchShift(fx.pitchShift);
+
+      if (audioCtxRef.current) {
+        updateReverbBuffer(
+          audioCtxRef.current,
+          fx.reverbType,
+          fx.reverbRoomSize || 1.0,
+          fx.reverbDecayTime || 1.8
+        );
+      }
+    },
+    [updateReverbBuffer]
+  );
 
   /**
-   * Real-Time VU Metering, Pitch Detection, & Noise Gate Loop
+   * Real-Time VU Metering, Pitch Detection, AGC & Dynamic Noise Gate Loop
    */
   useEffect(() => {
     if (!isMicActive) return;
@@ -1039,24 +1328,67 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       if (inAn && ctx) {
         inAn.getFloatTimeDomainData(inBuffer);
 
-        // 1. Calculate Input RMS Volume
+        // 1. Calculate Input RMS & Peak Volume
         let inSum = 0;
+        let inPeak = 0;
         for (let i = 0; i < inBuffer.length; i++) {
-          inSum += inBuffer[i] * inBuffer[i];
+          const val = inBuffer[i];
+          const absVal = Math.abs(val);
+          if (absVal > inPeak) inPeak = absVal;
+          inSum += val * val;
         }
         const inRms = Math.sqrt(inSum / inBuffer.length);
         const inDb = inRms > 0 ? 20 * Math.log10(inRms) : -100;
         const inPct = Math.min(100, Math.max(0, Math.round(((inDb + 60) / 60) * 100)));
+        const peakPct = Math.min(100, Math.max(0, Math.round(inPeak * 100)));
         setInputLevel(inPct);
+        setInputPeak(peakPct);
 
-        // 2. Real-Time Noise Gate
+        // Check clipping
+        setIsClipping(inPeak >= 0.98);
+
+        // 2. Real-Time Dynamic Noise Gate with Hysteresis & Hold
         if (gateGainRef.current) {
-          const isBelowGate = inDb < noiseGateThreshold;
-          const targetGate = isBelowGate ? 0.05 : 1.0;
-          gateGainRef.current.gain.setTargetAtTime(targetGate, ctx.currentTime, 0.015);
+          if (noiseReductionMode === 'off') {
+            gateGainRef.current.gain.setTargetAtTime(1.0, ctx.currentTime, 0.015);
+            setIsNoiseGateOpen(true);
+          } else {
+            const nowMs = performance.now();
+            const openThreshold = noiseGateThreshold;
+            const floorGain =
+              noiseReductionMode === 'low' ? 0.15 :
+              noiseReductionMode === 'high' ? 0.01 : 0.05; // medium = 0.05 (-26dB)
+
+            if (inDb >= openThreshold) {
+              // Voice active - open immediately & hold
+              gateHoldUntilRef.current = nowMs + 100; // 100ms hold
+              gateGainRef.current.gain.setTargetAtTime(1.0, ctx.currentTime, 0.003); // 3ms fast attack
+              setIsNoiseGateOpen(true);
+            } else if (nowMs < gateHoldUntilRef.current) {
+              // Within hold window - keep open
+              gateGainRef.current.gain.setTargetAtTime(1.0, ctx.currentTime, 0.005);
+              setIsNoiseGateOpen(true);
+            } else {
+              // Smooth release to attenuated floor
+              gateGainRef.current.gain.setTargetAtTime(floorGain, ctx.currentTime, 0.03); // 30ms smooth release
+              setIsNoiseGateOpen(false);
+            }
+          }
         }
 
-        // 3. Real-Time Pitch Detection & Scale Correction
+        // 3. Intelligent Auto Gain Control (AGC)
+        if (agcGainRef.current) {
+          if (isAgcActive && inDb > -45) {
+            // Target vocal level: -18 dBFS
+            const diffDb = -18 - inDb;
+            const agcFactor = Math.pow(10, Math.max(-6, Math.min(8, diffDb * 0.25)) / 20);
+            agcGainRef.current.gain.setTargetAtTime(agcFactor, ctx.currentTime, 0.08);
+          } else {
+            agcGainRef.current.gain.setTargetAtTime(1.0, ctx.currentTime, 0.08);
+          }
+        }
+
+        // 4. Real-Time Pitch Detection & Scale Correction
         const pitchHz = detectPitchAutocorrelation(inBuffer, ctx.sampleRate);
         if (pitchHz > 65 && pitchHz < 1050) {
           const details = frequencyToNoteDetails(pitchHz);
@@ -1079,7 +1411,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
         }
       }
 
-      // 4. Output RMS Volume
+      // 5. Output RMS Volume
       if (outAn) {
         outAn.getFloatTimeDomainData(outBuffer);
         let outSum = 0;
@@ -1104,7 +1436,100 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
         animFrameRef.current = null;
       }
     };
-  }, [isMicActive, noiseGateThreshold, selectedKey, selectedScale]);
+  }, [isMicActive, noiseReductionMode, noiseGateThreshold, isAgcActive, selectedKey, selectedScale]);
+
+  /**
+   * Interactive 3-Second Microphone Test Tool
+   */
+  const startMicTest = useCallback(async () => {
+    if (!isMicActive) {
+      await startMic();
+    }
+    if (!recordDestRef.current) return;
+
+    try {
+      setTestAudioUrl(null);
+      setMicTestPhase('recording');
+      setMicTestCountdown(3);
+
+      const stream = recordDestRef.current.stream;
+      const testRecorder = new MediaRecorder(stream);
+      testRecorderRef.current = testRecorder;
+      const chunks = [];
+
+      testRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) chunks.push(e.data);
+      };
+
+      testRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: testRecorder.mimeType || 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        setTestAudioUrl(url);
+        setMicTestPhase('playing');
+
+        // Automatic instant playback through the selected output
+        const audio = new Audio(url);
+        testAudioElRef.current = audio;
+        if (selectedOutputId && typeof audio.setSinkId === 'function') {
+          audio.setSinkId(selectedOutputId).catch(() => {});
+        }
+        audio.onended = () => {
+          setMicTestPhase('done');
+        };
+        audio.play().catch(() => {
+          setMicTestPhase('done');
+        });
+      };
+
+      testRecorder.start(100);
+
+      let remaining = 3;
+      testTimerRef.current = setInterval(() => {
+        remaining -= 1;
+        setMicTestCountdown(remaining);
+        if (remaining <= 0) {
+          clearInterval(testTimerRef.current);
+          testTimerRef.current = null;
+          if (testRecorder.state === 'recording') {
+            testRecorder.stop();
+          }
+        }
+      }, 1000);
+    } catch (err) {
+      console.warn('Mic test error:', err);
+      setMicTestPhase('idle');
+    }
+  }, [isMicActive, startMic, selectedOutputId]);
+
+  const stopMicTest = useCallback(() => {
+    if (testTimerRef.current) {
+      clearInterval(testTimerRef.current);
+      testTimerRef.current = null;
+    }
+    if (testRecorderRef.current && testRecorderRef.current.state === 'recording') {
+      testRecorderRef.current.stop();
+    }
+    if (testAudioElRef.current) {
+      testAudioElRef.current.pause();
+      testAudioElRef.current = null;
+    }
+    setMicTestPhase('idle');
+  }, []);
+
+  const replayTestAudio = useCallback(() => {
+    if (!testAudioUrl) return;
+    if (testAudioElRef.current) {
+      testAudioElRef.current.pause();
+    }
+    const audio = new Audio(testAudioUrl);
+    testAudioElRef.current = audio;
+    if (selectedOutputId && typeof audio.setSinkId === 'function') {
+      audio.setSinkId(selectedOutputId).catch(() => {});
+    }
+    setMicTestPhase('playing');
+    audio.onended = () => setMicTestPhase('done');
+    audio.play().catch(() => setMicTestPhase('done'));
+  }, [testAudioUrl, selectedOutputId]);
 
   /**
    * Performance Audio Recording (Mic Effects + Karaoke Music)
@@ -1143,79 +1568,38 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
         setRecordingSeconds((prev) => prev + 1);
       }, 1000);
     } catch (e) {
-      console.error('Recording start failed:', e);
+      console.error('Recording start warning:', e);
     }
   }, []);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop();
-    }
     if (recordTimerRef.current) {
       clearInterval(recordTimerRef.current);
       recordTimerRef.current = null;
     }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
     setIsRecording(false);
   }, []);
 
-  const downloadRecording = useCallback((customTitle = 'Karaoke-Song') => {
+  const downloadRecording = useCallback((filename = 'Karaoke-Performance') => {
     if (!recordedAudioUrl) return;
-    const cleanTitle = (customTitle || 'KTV-Recording').replace(/[^a-zA-Z0-9_\-\u1780-\u17FF]/g, '_');
     const a = document.createElement('a');
     a.href = recordedAudioUrl;
-    a.download = `${cleanTitle}-Studio-Voice.webm`;
+    a.download = `${filename}.webm`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   }, [recordedAudioUrl]);
 
-  const setMicBoostPreset = useCallback((level) => {
-    if (level === 'normal') setMicVolume(1.0);
-    else if (level === 'full') setMicVolume(1.8);
-    else if (level === 'boost') setMicVolume(2.5);
-  }, []);
-
-  const setEchoPreset = useCallback((preset) => {
-    setIsEchoOn(true);
-    if (preset === 'off') {
-      setIsEchoOn(false);
-    } else if (preset === 'room') {
-      setDelayTime(0.06);
-      setEchoLevel(0.15);
-      setEchoFeedback(0.18);
-    } else if (preset === 'karaoke') {
-      setDelayTime(0.09);
-      setEchoLevel(0.22);
-      setEchoFeedback(0.25);
-    } else if (preset === 'concert') {
-      setDelayTime(0.16);
-      setEchoLevel(0.30);
-      setEchoFeedback(0.35);
-    }
-  }, []);
-
-  const toggleNoiseCut = useCallback(() => {
-    setIsNoiseCutActive((prev) => !prev);
-  }, []);
-
-  const toggleHeadphones = useCallback(() => {
-    toggleMonitoring();
-  }, [toggleMonitoring]);
-
-  // Clean on unmount
-  useEffect(() => {
-    return () => {
-      stopMic();
-      if (recordTimerRef.current) clearInterval(recordTimerRef.current);
-    };
-  }, [stopMic]);
-
   return {
-    // Device Management
+    // Microphone & Device Selection
     availableMics,
     selectedMicId,
     changeMicDevice,
-    refreshMics,
+    micChannelMode,
+    setMicChannelMode,
     isMicActive,
     toggleMic,
     startMic,
@@ -1225,63 +1609,86 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     micError,
     micStream: mediaStreamRef.current,
 
-    // Live Levels & Analysers (for Waveform Canvas & VU Meters)
+    // Audio Output Device (setSinkId)
+    availableOutputs,
+    selectedOutputId,
+    changeOutputDevice,
+
+    // Live Levels & Analysers (VU Meters & Waveform Canvas)
     inputLevel,
+    inputPeak,
     outputLevel,
+    isClipping,
     inputAnalyser: inputAnalyserRef.current,
     outputAnalyser: outputAnalyserRef.current,
 
-    // Monitoring & Ducking
+    // Direct Headphone Monitoring & Ducking
     isMonitoring,
     toggleMonitoring,
-    micChannelMode,
-    setMicChannelMode,
     isMonitorSpeaker: isMonitoring,
     setIsMonitorSpeaker: toggleMonitoring,
     isHeadphonesConnected: isMonitoring,
-    toggleHeadphones,
+    toggleHeadphones: toggleMonitoring,
     keepMusicNormal,
     setKeepMusicNormal,
     toggleKeepMusicNormal: () => setKeepMusicNormal((p) => !p),
 
-    // 1-Click Presets
+    // 1-Click Voice Presets
     activePresetId,
     applyPreset,
     VOICE_PRESETS,
 
-    // Master Levels & Balance
+    // MODULE 3: Mic Boost & AGC
     micVolume,
     setMicVolume,
+    micPreampBoost,
+    setMicPreampBoost,
     setMicBoostPreset,
+    isAgcActive,
+    setIsAgcActive,
+    toggleAgc: () => setIsAgcActive((p) => !p),
     vocalMusicBalance,
     setVocalMusicBalance,
 
-    // 3-Band Equalizer
+    // MODULE 2: AI Multi-Stage Noise Reduction & Gate
+    noiseReductionMode,
+    setNoiseReductionMode,
+    noiseGateThreshold,
+    setNoiseGateThreshold,
+    isNoiseGateOpen,
+    isNoiseCutActive: noiseReductionMode !== 'off',
+    toggleNoiseCut: () => setNoiseReductionMode((p) => (p === 'off' ? 'medium' : 'off')),
+
+    // MODULE 1: Real-Time Reverb Studio (ConvolverNode)
+    isReverbOn,
+    setIsReverbOn,
+    toggleReverb,
+    reverbType,
+    changeReverbType,
+    reverbWet,
+    setReverbWet,
+    reverbLevel: reverbWet, // Alias for backwards compatibility
+    setReverbLevel: setReverbWet,
+    reverbDry,
+    setReverbDry,
+    reverbRoomSize,
+    changeReverbRoomSize,
+    setReverbRoomSize: changeReverbRoomSize,
+    reverbDecayTime,
+    changeReverbDecayTime,
+    setReverbDecayTime: changeReverbDecayTime,
+
+    // 3-Band Equalizer & Compressor
     eqBass,
     setEqBass,
     eqMid,
     setEqMid,
     eqTreble,
     setEqTreble,
-
-    // Studio Compressor
     compThreshold,
     setCompThreshold,
     compRatio,
     setCompRatio,
-
-    // Noise Gate & Suppression
-    isNoiseCutActive,
-    setIsNoiseCutActive,
-    toggleNoiseCut,
-    noiseGateThreshold,
-    setNoiseGateThreshold,
-
-    // Reverb Studio
-    reverbType,
-    changeReverbType,
-    reverbLevel,
-    setReverbLevel,
 
     // Echo / Delay Studio
     isEchoOn,
@@ -1308,6 +1715,14 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     detectedPitch,
     SCALES,
     NOTE_NAMES,
+
+    // Interactive 3-Second Microphone Test Tool
+    micTestPhase,
+    micTestCountdown,
+    testAudioUrl,
+    startMicTest,
+    stopMicTest,
+    replayTestAudio,
 
     // Performance Recording
     isRecording,
