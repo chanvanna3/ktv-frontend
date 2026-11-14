@@ -752,6 +752,8 @@ export function App() {
                           toggleHeadphones={micEngine.toggleHeadphones}
                           isMonitorSpeaker={micEngine.isMonitorSpeaker}
                           setIsMonitorSpeaker={micEngine.setIsMonitorSpeaker}
+                          isNoiseCutActive={micEngine.isNoiseCutActive}
+                          toggleNoiseCut={micEngine.toggleNoiseCut}
                         />
                       </div>
                     );
@@ -1117,6 +1119,23 @@ export function App() {
                       250% បំពងខ្លាំង
                     </button>
                   </div>
+
+                  {/* Anti-Noise & Hiss Filter Toggle for Mobile */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800 mt-2">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className={`w-4 h-4 ${micEngine.isNoiseCutActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                      <span className="text-xs font-semibold text-slate-300">កាត់ Noise & Hiss (សំឡេងរំខាន)</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={micEngine.toggleNoiseCut}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        micEngine.isNoiseCutActive ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      {micEngine.isNoiseCutActive ? 'កាត់ NOISE: ON' : 'OFF'}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -1172,20 +1191,43 @@ export function App() {
             {/* Drawer Tab 3: Echo & Delay Setting */}
             {mobileDrawerTab === 'echo' && (
               <div className="space-y-4 animate-fade-in">
-                {/* Echo Toggle */}
+                {/* Vocal Latency & Echo Mode Switch (Real-Time 0ms vs Echo) */}
                 <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-200">
-                    <Waves className={`w-4 h-4 ${micEngine.isEchoOn ? 'text-indigo-400 animate-pulse' : 'text-slate-500'}`} />
-                    <span>Echo Effect (អេកូ)</span>
+                  <div className="flex items-center gap-2">
+                    <Zap className={`w-4 h-4 ${!micEngine.isEchoOn ? 'text-amber-400' : 'text-slate-500'}`} />
+                    <div>
+                      <span className="text-xs font-bold text-slate-200 block">
+                        {!micEngine.isEchoOn ? '⚡ សំឡេងផ្ទាល់ (0ms មិន Slow)' : '🌊 សំឡេងអេកូ (Echo Studio)'}
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        {!micEngine.isEchoOn ? 'សំឡេងលឺភ្លាមៗ គ្មាន lag' : 'អេកូបែប Studio Reverb ស្រទន់'}
+                      </span>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => micEngine.setIsEchoOn(!micEngine.isEchoOn)}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      micEngine.isEchoOn ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {micEngine.isEchoOn ? 'ECHO: ON' : 'ECHO: OFF'}
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => micEngine.setIsEchoOn(false)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                        !micEngine.isEchoOn
+                          ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      ⚡ 0ms ផ្ទាល់
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => micEngine.setIsEchoOn(true)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                        micEngine.isEchoOn
+                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      🌊 អេកូ
+                    </button>
+                  </div>
                 </div>
 
                 {/* Echo Feedback Wetness Slider */}

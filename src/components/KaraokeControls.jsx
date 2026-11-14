@@ -71,6 +71,8 @@ export function KaraokeControls({
   toggleHeadphones,
   isMonitorSpeaker,
   setIsMonitorSpeaker,
+  isNoiseCutActive,
+  toggleNoiseCut,
 }) {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'voice' | 'music' | 'fx' | 'assistant'
   const [showAdvancedFX, setShowAdvancedFX] = useState(false);
@@ -465,21 +467,64 @@ export function KaraokeControls({
                 </button>
               </div>
 
-              {/* Echo Toggle Switch */}
+              {/* Vocal Latency & Echo Mode Switch (Real-Time 0ms vs Echo) */}
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/70 border border-slate-800/80 mb-2">
+                <div className="flex items-center gap-2">
+                  <Zap className={`w-4 h-4 ${!isEchoOn ? 'text-amber-400' : 'text-slate-500'}`} />
+                  <div>
+                    <span className="text-xs font-semibold text-slate-200 block">
+                      {!isEchoOn ? '⚡ សំឡេងផ្ទាល់ (Real-Time 0ms មិន Slow)' : '🌊 សំឡេងអេកូ (Echo Studio)'}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {!isEchoOn ? 'សំឡេងលឺភ្លាមៗ គ្មាន delay គ្មាន slow' : 'អេកូបែប Studio Reverb ស្រទន់'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsEchoOn && setIsEchoOn(false)}
+                    className={`px-2 py-1 rounded text-[10px] font-bold cursor-pointer transition-all ${
+                      !isEchoOn
+                        ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    ⚡ 0ms ផ្ទាល់
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEchoOn && setIsEchoOn(true)}
+                    className={`px-2 py-1 rounded text-[10px] font-bold cursor-pointer transition-all ${
+                      isEchoOn
+                        ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    🌊 អេកូ
+                  </button>
+                </div>
+              </div>
+
+              {/* Noise Cut Filter Toggle (កាត់ Noise & Hiss) */}
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/70 border border-slate-800/80 mb-3">
                 <div className="flex items-center gap-2">
-                  <Waves className={`w-4 h-4 ${isEchoOn ? 'text-indigo-400' : 'text-slate-500'}`} />
-                  <span className="text-xs font-semibold text-slate-300">Echo Effect (អេកូ)</span>
+                  <ShieldCheck className={`w-4 h-4 ${isNoiseCutActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                  <div>
+                    <span className="text-xs font-semibold text-slate-200 block">កាត់ Noise & Hiss (សំឡេងរំខាន)</span>
+                    <span className="text-[10px] text-slate-400">កាត់សំឡេងខ្យល់ & រលកសម្លេងអគ្គិសនីចោល</span>
+                  </div>
                 </div>
                 <button
-                  onClick={() => setIsEchoOn && setIsEchoOn(!isEchoOn)}
-                  className={`px-3 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                    isEchoOn
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                  type="button"
+                  onClick={() => toggleNoiseCut && toggleNoiseCut()}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all ${
+                    isNoiseCutActive
+                      ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  {isEchoOn ? 'ECHO: ON' : 'ECHO: OFF'}
+                  {isNoiseCutActive ? 'កាត់ NOISE: ON' : 'OFF'}
                 </button>
               </div>
 
