@@ -422,7 +422,7 @@ export function App() {
     }
 
     if (!audioUrl && selectedVideoId) {
-      audioUrl = `/media/${selectedVideoId}/audio.wav`;
+      audioUrl = apiUrl(`/media/${selectedVideoId}/audio.wav`);
     }
 
     setIsInstantCutLoading(false);
