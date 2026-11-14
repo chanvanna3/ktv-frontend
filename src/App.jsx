@@ -747,6 +747,7 @@ export function App() {
                           setDelayTime={micEngine.setDelayTime}
                           setEchoPreset={micEngine.setEchoPreset}
                           micError={micEngine.micError}
+                          setMicBoostPreset={micEngine.setMicBoostPreset}
                           isHeadphonesConnected={micEngine.isHeadphonesConnected}
                           toggleHeadphones={micEngine.toggleHeadphones}
                           isMonitorSpeaker={micEngine.isMonitorSpeaker}
@@ -1061,24 +1062,61 @@ export function App() {
                   <button onClick={() => setVocalVolume(1)} className="p-1.5 rounded-lg bg-slate-800 text-[10px] text-slate-300 font-mono text-center">100%</button>
                 </div>
 
-                {/* Mic Gain Slider */}
-                <div className="space-y-1.5 pt-2 border-t border-slate-800">
+                {/* Mic Gain Slider & Studio Vocal Booster */}
+                <div className="space-y-2 pt-2 border-t border-slate-800">
                   <div className="flex items-center justify-between text-xs text-slate-300">
                     <span className="flex items-center gap-1.5">
                       <Mic className="w-3.5 h-3.5 text-rose-400" />
-                      <span>កម្រិតសំឡេងម៉ៃក្រូហ្វូន (Mic Gain):</span>
+                      <span className="font-semibold">កម្រិតសំឡេងម៉ៃក្រូហ្វូន (Mic Boost):</span>
                     </span>
-                    <span className="font-mono text-rose-400 font-bold">{Math.round(micEngine.micVolume * 100)}%</span>
+                    <span className="font-mono text-rose-400 font-bold text-xs">{Math.round(micEngine.micVolume * 100)}%</span>
                   </div>
                   <input
                     type="range"
                     min="0"
-                    max="1.5"
+                    max="3.0"
                     step="0.05"
                     value={micEngine.micVolume}
                     onChange={(e) => micEngine.setMicVolume(parseFloat(e.target.value))}
                     className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
                   />
+
+                  {/* Quick Vocal Boost Presets for Mobile */}
+                  <div className="grid grid-cols-3 gap-1.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => micEngine.setMicBoostPreset('normal')}
+                      className={`py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${
+                        Math.round(micEngine.micVolume * 100) === 100
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      100% ធម្មតា
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => micEngine.setMicBoostPreset('full')}
+                      className={`py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${
+                        Math.round(micEngine.micVolume * 100) === 180
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      180% សំឡេងពេញ
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => micEngine.setMicBoostPreset('boost')}
+                      className={`py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${
+                        Math.round(micEngine.micVolume * 100) === 250
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      250% បំពងខ្លាំង
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

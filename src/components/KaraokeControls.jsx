@@ -66,6 +66,7 @@ export function KaraokeControls({
   setDelayTime,
   setEchoPreset,
   micError,
+  setMicBoostPreset,
   isHeadphonesConnected,
   toggleHeadphones,
   isMonitorSpeaker,
@@ -565,22 +566,66 @@ export function KaraokeControls({
                 </div>
               </div>
 
-              {/* Mic Gain Slider (when mic is active) */}
+              {/* Mic Gain Slider & Studio Vocal Booster */}
               {isMicActive && (
-                <div className="mt-3 pt-2 border-t border-slate-800/80 space-y-1">
-                  <div className="flex items-center justify-between text-[11px] text-slate-400">
-                    <span>កម្រិតសំឡេងម៉ៃក្រូហ្វូន (Mic Gain):</span>
-                    <span className="font-mono text-rose-400 font-bold">{Math.round(micVolume * 100)}%</span>
+                <div className="mt-3 pt-2 border-t border-slate-800/80 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-300">
+                    <span className="font-semibold flex items-center gap-1.5">
+                      <span>កម្រិតសំឡេងម៉ៃក្រូហ្វូន (Mic Boost):</span>
+                      {micVolume >= 1.7 && (
+                        <span className="px-1.5 py-0.2 rounded bg-rose-950 text-rose-300 border border-rose-500/40 text-[9px] font-bold">
+                          សំឡេងពេញ (Full)
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-mono text-rose-400 font-bold text-xs">{Math.round(micVolume * 100)}%</span>
                   </div>
                   <input
                     type="range"
                     min="0"
-                    max="1.5"
+                    max="3.0"
                     step="0.05"
                     value={micVolume}
                     onChange={(e) => setMicVolume && setMicVolume(parseFloat(e.target.value))}
                     className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
                   />
+
+                  {/* Quick Vocal Boost Presets */}
+                  <div className="grid grid-cols-3 gap-1 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setMicBoostPreset ? setMicBoostPreset('normal') : setMicVolume(1.0)}
+                      className={`p-1 rounded text-[10px] font-mono cursor-pointer transition-all ${
+                        Math.round(micVolume * 100) === 100
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      100% ធម្មតា
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMicBoostPreset ? setMicBoostPreset('full') : setMicVolume(1.8)}
+                      className={`p-1 rounded text-[10px] font-mono cursor-pointer transition-all ${
+                        Math.round(micVolume * 100) === 180
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      180% សំឡេងពេញ
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMicBoostPreset ? setMicBoostPreset('boost') : setMicVolume(2.5)}
+                      className={`p-1 rounded text-[10px] font-mono cursor-pointer transition-all ${
+                        Math.round(micVolume * 100) === 250
+                          ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                      }`}
+                    >
+                      250% បំពងខ្លាំង
+                    </button>
+                  </div>
                 </div>
               )}
 

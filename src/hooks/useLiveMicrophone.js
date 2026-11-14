@@ -3,13 +3,14 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 /**
  * Hook for live microphone capture with acoustic feedback protection,
  * automatic headphone/earphone detection, simultaneous music+voice monitoring,
- * hardware echo cancellation, and studio effects (Echo & Delay).
+ * Studio Pre-amp Boost (full rich vocals), Vocal Presence EQ, and Studio Echo/Delay.
  */
 export function useLiveMicrophone() {
   const [isMicActive, setIsMicActive] = useState(false);
-  const [micVolume, setMicVolume] = useState(0.85); // 0.0 - 1.5
+  // Default to 1.8x (180% Studio Boost) so smartphone mic is loud, full, and clear over backing music!
+  const [micVolume, setMicVolume] = useState(1.8); // 0.0 - 3.0
   const [isEchoOn, setIsEchoOn] = useState(true);   // Default ON for karaoke booth feel
-  const [echoLevel, setEchoLevel] = useState(0.24); // Safe gentle feedback (0.0 - 0.50)
+  const [echoLevel, setEchoLevel] = useState(0.25); // Safe gentle feedback (0.0 - 0.50)
   const [delayTime, setDelayTime] = useState(0.20); // 0.05 - 0.60s (Delay in seconds)
   const [isMonitorSpeaker, setIsMonitorSpeaker] = useState(false); // Hear yourself through headphones
   const [isHeadphonesConnected, setIsHeadphonesConnected] = useState(false);
@@ -18,6 +19,8 @@ export function useLiveMicrophone() {
   const audioContextRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const sourceNodeRef = useRef(null);
+  const highpassNodeRef = useRef(null);
+  const presenceNodeRef = useRef(null);
   const gainNodeRef = useRef(null);
   const delayNodeRef = useRef(null);
   const feedbackNodeRef = useRef(null);
@@ -83,13 +86,14 @@ export function useLiveMicrophone() {
         throw new Error('ឧបករណ៍ ឬ Browser របស់អ្នកមិនគាំទ្រ Microphone ឡើយ។');
       }
 
-      // CRITICAL FOR MOBILE: Always enable hardware echo cancellation & noise suppression
-      // to eliminate speaker-to-mic screeching feedback on smartphones!
+      // FOR SINGING: echoCancellation keeps hardware processing when available,
+      // but noiseSuppression: false & autoGainControl: false prevent the mobile OS
+      // from squashing/muting sustained singing notes and vibrato!
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
+          noiseSuppression: false,
+          autoGainControl: false,
         },
       });
 
@@ -105,27 +109,41 @@ export function useLiveMicrophone() {
       const source = ctx.createMediaStreamSource(stream);
       sourceNodeRef.current = source;
 
-      // Master Mic Gain
+      // 1. High-pass Filter (85Hz): eliminates handling rumble and wind pops
+      const highpass = ctx.createBiquadFilter();
+      highpass.type = 'highpass';
+      highpass.frequency.value = 85;
+      highpassNodeRef.current = highpass;
+
+      // 2. Vocal Presence EQ (3200Hz, +3.5dB boost): gives crisp, bright, professional vocal clarity
+      const presence = ctx.createBiquadFilter();
+      presence.type = 'peaking';
+      presence.frequency.value = 3200;
+      presence.gain.value = 3.5;
+      presence.Q.value = 1.1;
+      presenceNodeRef.current = presence;
+
+      // 3. Master Mic Pre-amp Gain
       const gain = ctx.createGain();
-      gain.gain.value = micVolume;
+      gain.gain.value = micVolume; // 1.8x default boost for full voice
       gainNodeRef.current = gain;
 
-      // Acoustic Feedback Limiter & Compressor (Prevents phone speaker howling)
+      // 4. Vocal Studio Dynamics Compressor: smooths dynamics without choking or squashing loudness
       const limiter = ctx.createDynamicsCompressor();
-      limiter.threshold.value = -16;
-      limiter.knee.value = 30;
-      limiter.ratio.value = 16;
-      limiter.attack.value = 0.003;
-      limiter.release.value = 0.25;
+      limiter.threshold.value = -6; // Gentle ceiling (was -16 which smothered volume)
+      limiter.knee.value = 24;
+      limiter.ratio.value = 4.0;    // Musical 4:1 compression
+      limiter.attack.value = 0.005;
+      limiter.release.value = 0.15;
       limiterNodeRef.current = limiter;
 
-      // Monitor Speaker Gain: allows user to hear voice through headphones
+      // 5. Monitor Gain: routes microphone into headphones
       const shouldMonitor = typeof forcedMonitor === 'boolean' ? forcedMonitor : isMonitorSpeakerRef.current;
       const monitorGain = ctx.createGain();
-      monitorGain.gain.value = shouldMonitor ? 0.9 : 0.0;
+      monitorGain.gain.value = shouldMonitor ? 1.0 : 0.0;
       monitorGainNodeRef.current = monitorGain;
 
-      // Delay / Echo effect nodes
+      // 6. Delay / Echo effect nodes
       const delay = ctx.createDelay(1.0);
       delay.delayTime.value = delayTime;
       delayNodeRef.current = delay;
@@ -134,16 +152,18 @@ export function useLiveMicrophone() {
       feedback.gain.value = isEchoOn ? Math.min(0.45, echoLevel) : 0;
       feedbackNodeRef.current = feedback;
 
-      // Safe routing:
-      // source -> master gain -> echo loop & monitor gain -> limiter -> destination
-      source.connect(gain);
+      // High-Fidelity Signal Chain:
+      // source -> highpass (85Hz) -> presence (3.2kHz) -> preamp gain (1.8x)
+      source.connect(highpass);
+      highpass.connect(presence);
+      presence.connect(gain);
 
       // Echo Loop
       gain.connect(delay);
       delay.connect(feedback);
       feedback.connect(delay);
 
-      // Connect to output only through monitor gain & limiter
+      // Output mix to monitor & limiter -> destination (headphones)
       gain.connect(monitorGain);
       delay.connect(monitorGain);
       monitorGain.connect(limiter);
@@ -190,7 +210,7 @@ export function useLiveMicrophone() {
         if (!mediaStreamRef.current) {
           startMic(true);
         } else if (monitorGainNodeRef.current && audioContextRef.current) {
-          monitorGainNodeRef.current.gain.setTargetAtTime(0.9, audioContextRef.current.currentTime, 0.03);
+          monitorGainNodeRef.current.gain.setTargetAtTime(1.0, audioContextRef.current.currentTime, 0.03);
         }
       } else {
         // Unplugged: immediately mute monitor speaker to prevent howling feedback!
@@ -212,7 +232,7 @@ export function useLiveMicrophone() {
   // Adjust monitor speaker gain
   useEffect(() => {
     if (monitorGainNodeRef.current && audioContextRef.current) {
-      const target = isMonitorSpeaker ? 0.9 : 0.0;
+      const target = isMonitorSpeaker ? 1.0 : 0.0;
       monitorGainNodeRef.current.gain.setTargetAtTime(target, audioContextRef.current.currentTime, 0.03);
     }
   }, [isMonitorSpeaker]);
@@ -252,6 +272,13 @@ export function useLiveMicrophone() {
     }
   }, []);
 
+  // Quick Mic Boost presets
+  const setMicBoostPreset = useCallback((level) => {
+    if (level === 'normal') setMicVolume(1.0);
+    else if (level === 'full') setMicVolume(1.8);
+    else if (level === 'boost') setMicVolume(2.5);
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -266,6 +293,7 @@ export function useLiveMicrophone() {
     stopMic,
     micVolume,
     setMicVolume,
+    setMicBoostPreset,
     isEchoOn,
     setIsEchoOn,
     echoLevel,

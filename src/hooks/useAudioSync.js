@@ -23,7 +23,7 @@ export function useAudioSync({ instrumentalUrl, vocalsUrl, playerRef, isPlayerRe
   // Karaoke controls state: Default to VOCALS MUTED (isVocalOn = false)
   // so the user immediately gets pure AI Instrumental Karaoke!
   const [isVocalOn, setIsVocalOn] = useState(false);
-  const [instVolume, setInstVolume] = useState(1.0); // Full instrumental volume
+  const [instVolume, setInstVolume] = useState(0.82); // Balanced instrumental volume so live voice cuts through clearly
   const [vocalVolume, setVocalVolume] = useState(0.70); // 0.0 - 1.0
   const [audioLoaded, setAudioLoaded] = useState(false);
   const [currentDriftMs, setCurrentDriftMs] = useState(0);
