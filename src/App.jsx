@@ -352,7 +352,19 @@ export function App() {
             clearInterval(pollingTimerRef.current);
             pollingTimerRef.current = null;
             setIsProcessing(false);
-            setApiError(pollData.error || 'ការបំបែកភ្លេងបរាជ័យ។ សូមសាកល្បងម្តងទៀត។');
+            // Automatic Fallback: Start YouTube video with audio so user can sing right away!
+            console.warn('Backend separation notice, falling back to direct YouTube playback:', pollData.error);
+            setApiError(null);
+            setTimeout(() => {
+              const player = playerRef.current;
+              if (player && typeof player.unMute === 'function') {
+                try {
+                  player.unMute();
+                  player.setVolume(100);
+                  player.playVideo();
+                } catch (e) {}
+              }
+            }, 300);
           }
         } catch (e) {
           console.warn('Polling error:', e);
@@ -360,9 +372,19 @@ export function App() {
       }, 1500);
 
     } catch (err) {
-      console.error('Failed to trigger video processing:', err);
-      setApiError(err.message || 'Failed to trigger audio processing.');
+      console.warn('Failed to trigger video processing, falling back to direct YouTube playback:', err);
       setIsProcessing(false);
+      setApiError(null);
+      setTimeout(() => {
+        const player = playerRef.current;
+        if (player && typeof player.unMute === 'function') {
+          try {
+            player.unMute();
+            player.setVolume(100);
+            player.playVideo();
+          } catch (e) {}
+        }
+      }, 300);
     }
   };
 
