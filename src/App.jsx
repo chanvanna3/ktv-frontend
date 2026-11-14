@@ -30,12 +30,14 @@ import {
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useAudioSync } from './hooks/useAudioSync';
 import { useLiveMicrophone } from './hooks/useLiveMicrophone';
+import { useVoiceStudioPro } from './hooks/useVoiceStudioPro';
 import { useKaraokeStudio } from './hooks/useKaraokeStudio';
 import { SearchAndInput } from './components/SearchAndInput';
 import { KaraokePlayer } from './components/KaraokePlayer';
 import { KaraokeControls } from './components/KaraokeControls';
 import { KaraokeLyrics } from './components/KaraokeLyrics';
 import { ProcessingModal } from './components/ProcessingModal';
+import { KtvVoiceStudioPro } from './components/KtvVoiceStudioPro';
 import { apiUrl } from './utils/api';
 
 export function App() {
@@ -52,6 +54,7 @@ export function App() {
   const [playbackRate, setPlaybackRateState] = useState(1.0);
   const [isInstantCutLoading, setIsInstantCutLoading] = useState(false);
   const [externalSearchQuery, setExternalSearchQuery] = useState('');
+  const [isVoiceStudioOpen, setIsVoiceStudioOpen] = useState(false);
 
   // References
   const searchSectionRef = useRef(null);
@@ -165,10 +168,7 @@ export function App() {
     }
   }, []);
 
-  // 1. Live Microphone Engine Hook (Sing live with reverb/echo)
-  const micEngine = useLiveMicrophone();
-
-  // 2. YouTube IFrame Player wrapper hook (Strictly permanently muted)
+  // 1. YouTube IFrame Player wrapper hook (Strictly permanently muted)
   const {
     playerRef,
     containerId,
@@ -184,7 +184,7 @@ export function App() {
     onStateChange: onYTStateChange,
   });
 
-  // 3. Synchronized audio tracks engine hook (HT-Demucs FT dual tracks)
+  // 2. Synchronized audio tracks engine hook (HT-Demucs FT dual tracks)
   const {
     isVocalOn,
     setIsVocalOn,
@@ -206,6 +206,11 @@ export function App() {
     vocalsUrl: stems.vocalsUrl,
     playerRef: playerRef,
     isPlayerReady: isPlayerReady,
+  });
+
+  // 3. KTV Voice Studio PRO Hook (Live Mic, Auto-Tune, 3-Band EQ, Reverb & Echo)
+  const micEngine = useVoiceStudioPro({
+    karaokeAudioElement: instAudioElement,
   });
 
   const handleSeek = useCallback((seconds) => {
@@ -471,6 +476,19 @@ export function App() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* KTV Voice Studio PRO Header Button */}
+            <button
+              onClick={() => setIsVoiceStudioOpen(true)}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl font-bold text-xs bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white shadow-lg shadow-purple-500/25 border border-purple-400/40 cursor-pointer transition-all hover:scale-105 active:scale-95"
+              title="បើកផ្ទាំង KTV Voice Studio PRO (Auto-Tune & Voice FX)"
+            >
+              <Mic className="w-3.5 h-3.5 text-white animate-pulse" />
+              <span>Voice Studio PRO</span>
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-white/20 font-mono tracking-wider font-extrabold hidden md:inline">
+                AUTO-TUNE
+              </span>
+            </button>
+
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-slate-800/80 border border-slate-700 text-slate-300">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               AI Model: HT-Demucs FT
@@ -760,6 +778,7 @@ export function App() {
                           toggleNoiseCut={micEngine.toggleNoiseCut}
                           keepMusicNormal={micEngine.keepMusicNormal}
                           toggleKeepMusicNormal={micEngine.toggleKeepMusicNormal}
+                          onOpenVoiceStudio={() => setIsVoiceStudioOpen(true)}
                         />
                       </div>
                     );
@@ -1162,6 +1181,19 @@ export function App() {
                       {micEngine.keepMusicNormal ? 'ភ្លេងធម្មតា: ON' : 'OFF'}
                     </button>
                   </div>
+
+                  {/* Open Voice Studio PRO from Mobile Drawer */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileSettingsOpen(false);
+                      setIsVoiceStudioOpen(true);
+                    }}
+                    className="w-full mt-2 py-3 px-3 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-purple-500/25 active:scale-95 transition-all"
+                  >
+                    <Sparkles className="w-4 h-4 text-white animate-pulse" />
+                    <span>🎙️ បើក KTV Voice Studio PRO (Auto-Tune & FX)</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -1372,6 +1404,14 @@ export function App() {
         stage={processingStage}
         onStartInstantAutoVocalCut={handleStartInstantAutoVocalCut}
         isInstantCutLoading={isInstantCutLoading}
+      />
+
+      {/* KTV Voice Studio PRO Modal Rack */}
+      <KtvVoiceStudioPro
+        studio={micEngine}
+        isOpen={isVoiceStudioOpen}
+        onClose={() => setIsVoiceStudioOpen(false)}
+        videoTitle={videoTitle}
       />
 
       {/* Footer */}

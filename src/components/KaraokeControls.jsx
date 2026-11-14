@@ -75,6 +75,7 @@ export function KaraokeControls({
   toggleNoiseCut,
   keepMusicNormal = true,
   toggleKeepMusicNormal,
+  onOpenVoiceStudio,
 }) {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'voice' | 'music' | 'fx' | 'assistant'
   const [showAdvancedFX, setShowAdvancedFX] = useState(false);
@@ -441,6 +442,37 @@ export function KaraokeControls({
                     : '💡 សូមដោតកាសទូរស័ព្ទដើម្បីច្រៀងលឺសំឡេងខ្លួនឯង និងភ្លេងរត់ចូលកាសជាមួយគ្នា ដោយមិនខ្ទរចាលសំឡេង។'}
                 </p>
               </div>
+
+              {/* KTV Voice Studio PRO Shortcut Banner */}
+              {onOpenVoiceStudio && (
+                <button
+                  type="button"
+                  onClick={onOpenVoiceStudio}
+                  className="w-full mb-3 flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/70 via-indigo-950/70 to-cyan-950/70 border border-purple-500/50 hover:border-purple-400 text-white shadow-xl shadow-purple-500/15 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-purple-600/40 text-purple-300 border border-purple-500/30 group-hover:bg-purple-600 group-hover:text-white transition-all shadow-md">
+                      <Sparkles className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-white group-hover:text-purple-200">
+                          KTV Voice Studio PRO
+                        </span>
+                        <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-purple-500/30 text-purple-300 border border-purple-400/40 uppercase">
+                          AI Auto-Tune & Presets
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-300 line-clamp-1">
+                        បើកផ្ទាំង Studio អាជីព: Auto-Tune, 8 Presets, 3-Band EQ, Reverb, Echo & Record
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-cyan-400 group-hover:translate-x-1 transition-transform shrink-0 pl-2">
+                    បើក Studio &rarr;
+                  </span>
+                </button>
+              )}
 
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
