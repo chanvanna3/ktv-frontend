@@ -2,15 +2,17 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 /**
  * Hook for live microphone capture with acoustic feedback protection,
+ * automatic headphone/earphone detection, simultaneous music+voice monitoring,
  * hardware echo cancellation, and studio effects (Echo & Delay).
  */
 export function useLiveMicrophone() {
   const [isMicActive, setIsMicActive] = useState(false);
   const [micVolume, setMicVolume] = useState(0.85); // 0.0 - 1.5
-  const [isEchoOn, setIsEchoOn] = useState(false);
-  const [echoLevel, setEchoLevel] = useState(0.20); // Safe gentle feedback (0.0 - 0.50)
+  const [isEchoOn, setIsEchoOn] = useState(true);   // Default ON for karaoke booth feel
+  const [echoLevel, setEchoLevel] = useState(0.24); // Safe gentle feedback (0.0 - 0.50)
   const [delayTime, setDelayTime] = useState(0.20); // 0.05 - 0.60s (Delay in seconds)
-  const [isMonitorSpeaker, setIsMonitorSpeaker] = useState(false); // Hear yourself through speaker (default OFF on phones to prevent screeching echo)
+  const [isMonitorSpeaker, setIsMonitorSpeaker] = useState(false); // Hear yourself through headphones
+  const [isHeadphonesConnected, setIsHeadphonesConnected] = useState(false);
   const [micError, setMicError] = useState(null);
 
   const audioContextRef = useRef(null);
@@ -21,8 +23,60 @@ export function useLiveMicrophone() {
   const feedbackNodeRef = useRef(null);
   const limiterNodeRef = useRef(null);
   const monitorGainNodeRef = useRef(null);
+  const isMonitorSpeakerRef = useRef(isMonitorSpeaker);
 
-  const startMic = useCallback(async () => {
+  // Keep ref in sync
+  useEffect(() => {
+    isMonitorSpeakerRef.current = isMonitorSpeaker;
+  }, [isMonitorSpeaker]);
+
+  // Check if headphones or external headset are detected
+  const detectHeadphones = useCallback(async () => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return false;
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasHeadphones = devices.some((device) => {
+        const label = (device.label || '').toLowerCase();
+        return (
+          label.includes('headphone') ||
+          label.includes('headset') ||
+          label.includes('earphone') ||
+          label.includes('airpod') ||
+          label.includes('buds') ||
+          label.includes('bluetooth') ||
+          label.includes('wireless') ||
+          label.includes('hands-free')
+        );
+      });
+      return hasHeadphones;
+    } catch (e) {
+      return false;
+    }
+  }, []);
+
+  // Listen to device changes (headphones plugged in / unplugged)
+  useEffect(() => {
+    let isMounted = true;
+    const handleDeviceChange = async () => {
+      const detected = await detectHeadphones();
+      if (!isMounted) return;
+      if (detected) {
+        setIsHeadphonesConnected(true);
+        setIsMonitorSpeaker(true);
+      }
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+      navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+      handleDeviceChange();
+      return () => {
+        isMounted = false;
+        navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+      };
+    }
+  }, [detectHeadphones]);
+
+  const startMic = useCallback(async (forcedMonitor) => {
     setMicError(null);
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -65,9 +119,10 @@ export function useLiveMicrophone() {
       limiter.release.value = 0.25;
       limiterNodeRef.current = limiter;
 
-      // Monitor Speaker Gain: allows user to hear voice through speaker only when desired or with headphones
+      // Monitor Speaker Gain: allows user to hear voice through headphones
+      const shouldMonitor = typeof forcedMonitor === 'boolean' ? forcedMonitor : isMonitorSpeakerRef.current;
       const monitorGain = ctx.createGain();
-      monitorGain.gain.value = isMonitorSpeaker ? 0.9 : 0.0;
+      monitorGain.gain.value = shouldMonitor ? 0.9 : 0.0;
       monitorGainNodeRef.current = monitorGain;
 
       // Delay / Echo effect nodes
@@ -100,7 +155,7 @@ export function useLiveMicrophone() {
       setMicError(err.message || 'មិនអាចបើក Microphone បានទេ។');
       setIsMicActive(false);
     }
-  }, [micVolume, isEchoOn, echoLevel, delayTime, isMonitorSpeaker]);
+  }, [micVolume, isEchoOn, echoLevel, delayTime]);
 
   const stopMic = useCallback(() => {
     if (mediaStreamRef.current) {
@@ -121,6 +176,31 @@ export function useLiveMicrophone() {
       startMic();
     }
   }, [isMicActive, startMic, stopMic]);
+
+  // Headphone mode toggle: automatically activates microphone and monitoring into headphones
+  const toggleHeadphones = useCallback((forcedState) => {
+    setIsHeadphonesConnected((prev) => {
+      const nextState = typeof forcedState === 'boolean' ? forcedState : !prev;
+      setIsMonitorSpeaker(nextState);
+      isMonitorSpeakerRef.current = nextState;
+
+      if (nextState) {
+        // User plugged in headphones: start mic & enable karaoke echo
+        setIsEchoOn(true);
+        if (!mediaStreamRef.current) {
+          startMic(true);
+        } else if (monitorGainNodeRef.current && audioContextRef.current) {
+          monitorGainNodeRef.current.gain.setTargetAtTime(0.9, audioContextRef.current.currentTime, 0.03);
+        }
+      } else {
+        // Unplugged: immediately mute monitor speaker to prevent howling feedback!
+        if (monitorGainNodeRef.current && audioContextRef.current) {
+          monitorGainNodeRef.current.gain.setTargetAtTime(0.0, audioContextRef.current.currentTime, 0.03);
+        }
+      }
+      return nextState;
+    });
+  }, [startMic]);
 
   // Adjust volume
   useEffect(() => {
@@ -182,6 +262,8 @@ export function useLiveMicrophone() {
   return {
     isMicActive,
     toggleMic,
+    startMic,
+    stopMic,
     micVolume,
     setMicVolume,
     isEchoOn,
@@ -193,6 +275,9 @@ export function useLiveMicrophone() {
     setEchoPreset,
     isMonitorSpeaker,
     setIsMonitorSpeaker,
+    isHeadphonesConnected,
+    setIsHeadphonesConnected,
+    toggleHeadphones,
     micError,
     micStream: mediaStreamRef.current,
   };

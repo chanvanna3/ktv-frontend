@@ -24,6 +24,7 @@ import {
   Activity,
   Layers,
   Sparkle,
+  Headphones,
 } from 'lucide-react';
 import { formatTime } from '../utils/youtube';
 
@@ -52,7 +53,7 @@ export function KaraokeControls({
   stopRecording,
   recordedAudioUrl,
   recordingSeconds,
-  // Microphone props
+  // Microphone & Headphone props
   isMicActive,
   toggleMic,
   micVolume,
@@ -65,6 +66,10 @@ export function KaraokeControls({
   setDelayTime,
   setEchoPreset,
   micError,
+  isHeadphonesConnected,
+  toggleHeadphones,
+  isMonitorSpeaker,
+  setIsMonitorSpeaker,
 }) {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'voice' | 'music' | 'fx' | 'assistant'
   const [showAdvancedFX, setShowAdvancedFX] = useState(false);
@@ -403,6 +408,38 @@ export function KaraokeControls({
         {(activeTab === 'all' || activeTab === 'fx') && (
           <div className="flex flex-col justify-between p-4 rounded-xl bg-slate-900/70 border border-slate-800/90 hover:border-indigo-500/40 transition-all space-y-4">
             <div>
+              {/* Headphone Karaoke Monitoring Notice & Quick Toggle */}
+              <div className={`p-3 rounded-xl border mb-3 transition-all ${
+                isHeadphonesConnected
+                  ? 'bg-emerald-950/40 border-emerald-500/50 shadow-lg shadow-emerald-500/10'
+                  : 'bg-amber-950/30 border-amber-500/40'
+              }`}>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <Headphones className={`w-4 h-4 ${isHeadphonesConnected ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+                    <span className="text-xs font-bold text-white">
+                      {isHeadphonesConnected ? '🎧 កាសសកម្ម (Headphones Ready)' : '🎧 តម្រូវឱ្យប្រើកាស (Headphones)'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleHeadphones && toggleHeadphones()}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer transition-all ${
+                      isHeadphonesConnected
+                        ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm'
+                        : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-md'
+                    }`}
+                  >
+                    {isHeadphonesConnected ? 'កាស ON' : 'ខ្ញុំបានដោតកាសហើយ'}
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  {isHeadphonesConnected
+                    ? '✨ សំឡេងច្រៀងតាម Mic និងភ្លេងរត់ចូលកាសជាមួយគ្នា 100% គ្មានសំឡេងចាល Echo!'
+                    : '💡 សូមដោតកាសទូរស័ព្ទដើម្បីច្រៀងលឺសំឡេងខ្លួនឯង និងភ្លេងរត់ចូលកាសជាមួយគ្នា ដោយមិនខ្ទរចាលសំឡេង។'}
+                </p>
+              </div>
+
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400">

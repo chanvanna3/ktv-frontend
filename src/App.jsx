@@ -25,6 +25,7 @@ import {
   X,
   Zap,
   ShieldCheck,
+  Headphones,
 } from 'lucide-react';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useAudioSync } from './hooks/useAudioSync';
@@ -711,7 +712,7 @@ export function App() {
                     layerTitle = '🎛️ ការកំណត់សំឡេង & អេកូ (Audio Studio Rack)';
                     layerIcon = <SlidersHorizontal className="w-4 h-4 text-purple-400" />;
                     layerContent = (
-                      <div className="hidden sm:block">
+                      <div className="w-full">
                         <KaraokeControls
                           isVocalOn={isVocalOn}
                           toggleVocals={toggleVocals}
@@ -746,6 +747,10 @@ export function App() {
                           setDelayTime={micEngine.setDelayTime}
                           setEchoPreset={micEngine.setEchoPreset}
                           micError={micEngine.micError}
+                          isHeadphonesConnected={micEngine.isHeadphonesConnected}
+                          toggleHeadphones={micEngine.toggleHeadphones}
+                          isMonitorSpeaker={micEngine.isMonitorSpeaker}
+                          setIsMonitorSpeaker={micEngine.setIsMonitorSpeaker}
                         />
                       </div>
                     );
@@ -827,6 +832,21 @@ export function App() {
       {/* Mobile Floating Quick Action Dock (សម្រាប់បទពិសោធន៍ Mobile App ដូច Smule / WeSing) */}
       {selectedVideoId && (
         <div className="sm:hidden fixed bottom-3 left-3 right-3 z-40 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-pink-500/40 p-2 shadow-2xl flex items-center justify-around shadow-pink-500/10 animate-fade-in">
+          {/* Headphone Mode Quick Button */}
+          <button
+            type="button"
+            onClick={() => micEngine.toggleHeadphones()}
+            className={`p-2 rounded-xl flex flex-col items-center gap-0.5 text-[10px] font-bold cursor-pointer transition-all ${
+              micEngine.isHeadphonesConnected
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30'
+                : 'text-amber-400 hover:text-amber-300'
+            }`}
+            title="ដោតកាសដើម្បីច្រៀងលឺសំឡេងតាម Mic & ភ្លេង"
+          >
+            <Headphones className={`w-4 h-4 ${micEngine.isHeadphonesConnected ? 'animate-pulse' : ''}`} />
+            <span>{micEngine.isHeadphonesConnected ? 'កាស ON' : 'ដោតកាស'}</span>
+          </button>
+
           {/* Mic Button */}
           <button
             type="button"
@@ -965,6 +985,43 @@ export function App() {
             {/* Drawer Tab 1: Voice & Mic Setting */}
             {mobileDrawerTab === 'voice' && (
               <div className="space-y-4 animate-fade-in">
+                {/* Headphone Karaoke Monitor Card */}
+                <div className={`p-3.5 rounded-2xl border transition-all ${
+                  micEngine.isHeadphonesConnected
+                    ? 'bg-emerald-950/60 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
+                    : 'bg-amber-950/40 border-amber-500/50'
+                }`}>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <Headphones className={`w-5 h-5 ${micEngine.isHeadphonesConnected ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+                      <div>
+                        <h4 className="text-xs font-bold text-white">
+                          {micEngine.isHeadphonesConnected ? 'កាសសកម្ម (Headphones Ready)' : 'តម្រូវឱ្យប្រើកាស (Headphones)'}
+                        </h4>
+                        <span className="text-[10px] text-slate-300">
+                          {micEngine.isHeadphonesConnected ? 'សំឡេង Mic & ភ្លេងរត់ចូលកាសជាមួយគ្នា' : 'ការពារសំឡេងខ្ទរ Echo លើទូរស័ព្ទ'}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => micEngine.toggleHeadphones()}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                        micEngine.isHeadphonesConnected
+                          ? 'bg-emerald-600 text-white shadow-md'
+                          : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-md'
+                      }`}
+                    >
+                      {micEngine.isHeadphonesConnected ? '🎧 កាស ON' : '🎧 ដោតកាសហើយ'}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    {micEngine.isHeadphonesConnected
+                      ? '✨ លោកអ្នកអាចច្រៀងលឺសំឡេងខ្លួនឯងតាម Mic បូករួមទាំងភ្លេងរត់ចូលកាសស្របគ្នា 100% ដូចក្នុងបន្ទប់ខារ៉ាអូខេ KTV!'
+                      : '💡 ដើម្បីច្រៀងលឺសំឡេងខ្លួនឯងតាម Mic សូមដោតកាសទូរស័ព្ទ រួចចុចប៊ូតុង "ដោតកាសហើយ" ដើម្បីបើក Mic & កាស។'}
+                  </p>
+                </div>
+
                 {/* Vocal Toggle */}
                 <button
                   onClick={toggleVocals}
