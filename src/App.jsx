@@ -1194,6 +1194,39 @@ export function App() {
                     <Sparkles className="w-4 h-4 text-white animate-pulse" />
                     <span>🎙️ បើក KTV Voice Studio PRO (Auto-Tune & FX)</span>
                   </button>
+
+                  {/* Keep Karaoke Music Normal (No Ducking) Toggle */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800 mt-2">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className={`w-4 h-4 ${micEngine.keepMusicNormal ? 'text-pink-400' : 'text-slate-500'}`} />
+                      <div>
+                        <span className="text-xs font-semibold text-slate-300 block">រក្សាសំឡេងភ្លេងធម្មតា</span>
+                        <span className="text-[10px] text-slate-400">មិនបន្ថយ ឬទម្លាក់ភ្លេងពេលច្រៀង</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={micEngine.toggleKeepMusicNormal}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        micEngine.keepMusicNormal ? 'bg-pink-600 text-white shadow-sm' : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      {micEngine.keepMusicNormal ? 'ភ្លេងធម្មតា: ON' : 'OFF'}
+                    </button>
+                  </div>
+
+                  {/* Open Voice Studio PRO from Mobile Drawer */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileSettingsOpen(false);
+                      setIsVoiceStudioOpen(true);
+                    }}
+                    className="w-full mt-2 py-3 px-3 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-purple-500/25 active:scale-95 transition-all"
+                  >
+                    <Sparkles className="w-4 h-4 text-white animate-pulse" />
+                    <span>🎙️ បើក KTV Voice Studio PRO (Auto-Tune & FX)</span>
+                  </button>
                 </div>
               </div>
             )}

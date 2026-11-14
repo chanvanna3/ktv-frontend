@@ -220,25 +220,32 @@ export const VOICE_PRESETS = {
 
 /**
  * Creates algorithmic stereo impulse response for ConvolverNode
+ * Calibrated specifically with normalize = false so that reverb is warm, lush,
+ * spacious, and clearly audible in headphones.
  */
 function createReverbImpulse(ctx, type = 'studio') {
-  const sampleRate = ctx.sampleRate;
-  let duration = 1.2;
-  let decay = 2.0;
+  const sampleRate = ctx.sampleRate || 44100;
+  let duration = 0.9;
+  let decay = 2.8;
+  let scale = 0.040;
 
   if (type === 'room') {
-    duration = 1.5;
-    decay = 2.5;
+    duration = 1.3;
+    decay = 2.4;
+    scale = 0.038;
   } else if (type === 'hall') {
-    duration = 2.8;
+    duration = 2.4;
     decay = 2.0;
+    scale = 0.034;
   } else if (type === 'concert') {
-    duration = 4.0;
-    decay = 1.7;
+    duration = 3.6;
+    decay = 1.6;
+    scale = 0.030;
   } else {
     // studio
     duration = 0.9;
-    decay = 3.2;
+    decay = 2.8;
+    scale = 0.040;
   }
 
   const length = Math.floor(sampleRate * duration);
@@ -247,11 +254,19 @@ function createReverbImpulse(ctx, type = 'studio') {
   const right = impulse.getChannelData(1);
 
   for (let i = 0; i < length; i++) {
-    const env = Math.pow(1 - i / length, decay);
-    // Decorrelated stereo noise with early reflections and tail
-    const early = i < sampleRate * 0.04 ? (Math.random() * 2 - 1) * 1.5 : 0;
-    left[i] = ((Math.random() * 2 - 1) * 0.7 + early) * env;
-    right[i] = ((Math.random() * 2 - 1) * 0.7 + early) * env;
+    const t = i / length;
+    const env = Math.pow(1 - t, decay);
+    // Early discrete reflections in the first 35ms for natural spatial depth
+    const isEarly = i < sampleRate * 0.035;
+    const earlyL = isEarly ? (Math.random() * 2 - 1) * 0.8 : 0;
+    const earlyR = isEarly ? (Math.random() * 2 - 1) * 0.8 : 0;
+
+    // Decorrelated stereo noise for wide spatial 3D imaging in headphones
+    const noiseL = (Math.random() * 2 - 1) * 0.6;
+    const noiseR = (Math.random() * 2 - 1) * 0.6;
+
+    left[i] = (noiseL + earlyL) * env * scale;
+    right[i] = (noiseR + earlyR) * env * scale;
   }
 
   return impulse;
@@ -366,6 +381,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   // 1. Microphone Volume & Direct Monitoring
   const [micVolume, setMicVolume] = useState(1.8); // 0.0 - 3.0 (180% Studio default)
   const [isMonitoring, setIsMonitoring] = useState(true); // Hear processed voice
+  const [micChannelMode, setMicChannelMode] = useState('both'); // 'both' (L+R dual) | 'left' (Ch 1) | 'right' (Ch 2)
   const [keepMusicNormal, setKeepMusicNormal] = useState(true); // No ducking of music
 
   // 2. 3-Band Studio EQ (-15dB to +15dB)
@@ -411,6 +427,8 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   const audioCtxRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const sourceNodeRef = useRef(null);
+  const inputSplitterRef = useRef(null);
+  const monoInputGainRef = useRef(null);
 
   // Processing chain refs
   const inputAnalyserRef = useRef(null);
@@ -494,6 +512,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     if (!ctx || !convolverRef.current) return;
     try {
       const impulse = createReverbImpulse(ctx, type);
+      convolverRef.current.normalize = false; // CRITICAL: prevent Web Audio from crushing reverb level!
       convolverRef.current.buffer = impulse;
     } catch (e) {
       console.warn('Reverb buffer build warning:', e);
@@ -519,13 +538,14 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       const devId = customDeviceId || selectedMicId;
 
       // Audio Constraints: Disable browser ducking so karaoke music stays at 100% full volume!
+      // Request stereo channelCount: 2 so multi-channel interfaces and USB mics expose both channels cleanly
       const audioConstraints = {
         deviceId: devId ? { exact: devId } : undefined,
         echoCancellation: false,
         autoGainControl: false,
         noiseSuppression: false,
         latency: 0,
-        channelCount: 1,
+        channelCount: 2,
         googEchoCancellation: false,
         googAutoGainControl: false,
         googNoiseSuppression: false,
@@ -545,21 +565,41 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       }
       audioCtxRef.current = ctx;
 
-      // 1. Source & Input Analyser (Live Meter)
+      // 1. Source & Channel Splitter (Fixes "mic heard in only one side/ear" bug!)
       const source = ctx.createMediaStreamSource(stream);
       sourceNodeRef.current = source;
+
+      // Create a ChannelSplitter to extract individual input channels
+      const inputSplitter = ctx.createChannelSplitter(2);
+      inputSplitterRef.current = inputSplitter;
+
+      // Mono Input Summer: guarantees vocal signal is centered and heard in BOTH ears
+      const monoInputGain = ctx.createGain();
+      monoInputGainRef.current = monoInputGain;
+
+      source.connect(inputSplitter);
+
+      if (micChannelMode === 'right') {
+        inputSplitter.connect(monoInputGain, 1);
+      } else if (micChannelMode === 'left') {
+        inputSplitter.connect(monoInputGain, 0);
+      } else {
+        // 'both' (Default: combine Left & Right so whatever channel has audio is heard centered in both ears!)
+        inputSplitter.connect(monoInputGain, 0);
+        inputSplitter.connect(monoInputGain, 1);
+      }
 
       const inAnalyser = ctx.createAnalyser();
       inAnalyser.fftSize = 512;
       inAnalyser.smoothingTimeConstant = 0.3;
       inputAnalyserRef.current = inAnalyser;
-      source.connect(inAnalyser);
+      monoInputGain.connect(inAnalyser);
 
       // 2. Noise Gate Gain
       const gateGain = ctx.createGain();
       gateGain.gain.value = 1.0;
       gateGainRef.current = gateGain;
-      source.connect(gateGain);
+      monoInputGain.connect(gateGain);
 
       // 3. Pre-filters (Anti-Rumble Highpass & Anti-Hiss Lowpass)
       const highpass = ctx.createBiquadFilter();
@@ -616,17 +656,24 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       micGainRef.current = micGain;
       compressor.connect(micGain);
 
-      // 7. Studio Reverb (Convolver)
+      // 7. Studio Reverb (Convolver with normalize = false and calibrated impulse response)
       const convolver = ctx.createConvolver();
+      convolver.normalize = false; // MUST be set before buffer assignment!
       convolverRef.current = convolver;
       updateReverbBuffer(ctx, reverbType);
 
+      // Post-reverb tone filter for smooth studio ambiance
+      const reverbTone = ctx.createBiquadFilter();
+      reverbTone.type = 'lowpass';
+      reverbTone.frequency.value = 6500;
+
       const reverbWetGain = ctx.createGain();
-      reverbWetGain.gain.value = reverbLevel;
+      reverbWetGain.gain.value = reverbLevel * 1.6;
       reverbWetGainRef.current = reverbWetGain;
 
       micGain.connect(convolver);
-      convolver.connect(reverbWetGain);
+      convolver.connect(reverbTone);
+      reverbTone.connect(reverbWetGain);
 
       // 8. Studio Echo / Feedback Delay (Analog Tape Echo style with high-damping)
       const delayNode = ctx.createDelay(1.0);
@@ -651,14 +698,31 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       feedbackGain.connect(delayNode);
       echoDamping.connect(echoWetGain);
 
-      // 9. Mix Vocal Bus (Dry + Reverb + Echo)
+      // 9. Mix Vocal Bus with Guaranteed Stereo Centering (L + R)
+      // Merger takes mono dry vocal and copies it to BOTH Left (0) and Right (1)
+      const dryStereoMerger = ctx.createChannelMerger(2);
+      micGain.connect(dryStereoMerger, 0, 0); // Dry vocal to Left Ear
+      micGain.connect(dryStereoMerger, 0, 1); // Dry vocal to Right Ear
+
+      // Merger takes mono echo and copies it to BOTH Left (0) and Right (1)
+      const echoStereoMerger = ctx.createChannelMerger(2);
+      echoWetGain.connect(echoStereoMerger, 0, 0); // Echo to Left Ear
+      echoWetGain.connect(echoStereoMerger, 0, 1); // Echo to Right Ear
+
+      // True Stereo Vocal Master Bus (channelCount = 2, explicit speakers)
       const vocalBus = ctx.createGain();
-      micGain.connect(vocalBus);
-      reverbWetGain.connect(vocalBus);
-      echoWetGain.connect(vocalBus);
+      vocalBus.channelCount = 2;
+      vocalBus.channelCountMode = 'explicit';
+      vocalBus.channelInterpretation = 'speakers';
+
+      // Connect dry voice (centered), echo (centered), and reverb (decorrelated stereo space) into vocal bus:
+      dryStereoMerger.connect(vocalBus);
+      echoStereoMerger.connect(vocalBus);
+      reverbWetGain.connect(vocalBus); // Full 2-channel stereo reverb in both ears!
 
       // 10. Output Monitor & Analyser
       const monitorGain = ctx.createGain();
+      monitorGain.channelCount = 2;
       monitorGain.gain.value = isMonitoring ? 1.0 : 0.0;
       monitorGainRef.current = monitorGain;
       vocalBus.connect(monitorGain);
@@ -712,6 +776,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     }
   }, [
     selectedMicId,
+    micChannelMode,
     eqBass,
     eqMid,
     eqTreble,
@@ -854,12 +919,32 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     }
   }, [isNoiseCutActive]);
 
-  // Reverb
+  // Reverb (Calibrated studio level so it's unmistakable in headphones)
   useEffect(() => {
     if (reverbWetGainRef.current && audioCtxRef.current) {
-      reverbWetGainRef.current.gain.setTargetAtTime(reverbLevel, audioCtxRef.current.currentTime, 0.02);
+      reverbWetGainRef.current.gain.setTargetAtTime(reverbLevel * 1.6, audioCtxRef.current.currentTime, 0.02);
     }
   }, [reverbLevel]);
+
+  // Dynamic Microphone Channel Routing (Ensures both ears receive sound seamlessly)
+  useEffect(() => {
+    if (inputSplitterRef.current && monoInputGainRef.current) {
+      try {
+        inputSplitterRef.current.disconnect();
+        if (micChannelMode === 'right') {
+          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
+        } else if (micChannelMode === 'left') {
+          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
+        } else {
+          // both (Default: combine Left & Right so whatever channel has audio is heard centered in both ears!)
+          inputSplitterRef.current.connect(monoInputGainRef.current, 0);
+          inputSplitterRef.current.connect(monoInputGainRef.current, 1);
+        }
+      } catch (e) {
+        console.warn('Channel routing update warning:', e);
+      }
+    }
+  }, [micChannelMode]);
 
   const changeReverbType = useCallback(
     (type) => {
@@ -1149,6 +1234,8 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
     // Monitoring & Ducking
     isMonitoring,
     toggleMonitoring,
+    micChannelMode,
+    setMicChannelMode,
     isMonitorSpeaker: isMonitoring,
     setIsMonitorSpeaker: toggleMonitoring,
     isHeadphonesConnected: isMonitoring,

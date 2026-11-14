@@ -192,6 +192,29 @@ export function KtvVoiceStudioPro({
               </select>
             )}
 
+            {/* Input Channel Mode (Dual L+R / Left / Right) */}
+            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px]">
+              <span className="text-slate-400 px-1 font-semibold hidden lg:inline">សំឡេង:</span>
+              {[
+                { id: 'both', label: 'សងខាង (L+R)' },
+                { id: 'left', label: 'ឆ្វេង (Ch 1)' },
+                { id: 'right', label: 'ស្តាំ (Ch 2)' },
+              ].map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => studio.setMicChannelMode(c.id)}
+                  className={`px-2 py-0.5 rounded-lg font-bold text-[10px] transition-all cursor-pointer ${
+                    studio.micChannelMode === c.id
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title={c.id === 'both' ? 'លឺទាំងសងខាង (Stereo Dual L+R)' : `Input Channel: ${c.label}`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+
             {/* Mic Toggle Button */}
             <button
               onClick={studio.toggleMic}
@@ -724,7 +747,10 @@ export function KtvVoiceStudioPro({
                 {/* Reverb Wetness Slider */}
                 <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2 mt-2">
                   <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-indigo-300">កម្រិតបន្ទរ Reverb (Wetness):</span>
+                    <span className="text-indigo-300 flex items-center gap-1.5">
+                      <Headphones className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>កម្រិតបន្ទរ Reverb (Stereo Wetness):</span>
+                    </span>
                     <span className="font-mono text-indigo-400">
                       {Math.round(studio.reverbLevel * 100)}%
                     </span>
@@ -732,12 +758,16 @@ export function KtvVoiceStudioPro({
                   <input
                     type="range"
                     min="0"
-                    max="0.85"
+                    max="1.0"
                     step="0.05"
                     value={studio.reverbLevel}
                     onChange={(e) => studio.setReverbLevel(parseFloat(e.target.value))}
                     className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-400"
                   />
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                    <span>✨ បន្ទរ Reverb លឺពេញក្នុងកាសទាំងសងខាង (Stereo Dual Ear Monitoring)</span>
+                    <span className="text-indigo-400 font-bold">0ms Real-Time DSP</span>
+                  </div>
                 </div>
               </div>
 
