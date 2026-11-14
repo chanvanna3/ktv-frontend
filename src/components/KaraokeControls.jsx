@@ -238,11 +238,8 @@ export function KaraokeControls({
               {/* Main Vocal Toggle Button */}
               <button
                 onClick={toggleVocals}
-                disabled={!audioLoaded}
                 className={`relative flex items-center justify-center gap-2.5 w-full py-3.5 px-4 rounded-xl font-bold text-xs tracking-wide transition-all shadow-lg cursor-pointer ${
-                  !audioLoaded
-                    ? 'bg-slate-800/70 text-slate-400 border border-slate-700/60 opacity-80 cursor-not-allowed'
-                    : isVocalOn
+                  isVocalOn
                     ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-pink-500/30 hover:brightness-110 ring-2 ring-pink-400/50'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20 ring-2 ring-emerald-400/40'
                 }`}

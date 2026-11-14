@@ -353,9 +353,13 @@ export function App() {
             clearInterval(pollingTimerRef.current);
             pollingTimerRef.current = null;
             setIsProcessing(false);
-            // Automatic Fallback: Start YouTube video with audio so user can sing right away!
+            // Notice: If YouTube flagged the datacenter IP, inform user clearly
             console.warn('Backend separation notice, falling back to direct YouTube playback:', pollData.error);
-            setApiError(null);
+            if (pollData.error && (pollData.error.includes('bot') || pollData.error.includes('Sign in'))) {
+              setApiError('YouTube Bot Notice: YouTube តម្រូវឱ្យផ្ទៀងផ្ទាត់ Bot លើ Cloud Server Render សម្រាប់បទនេះ។ កំពុងប្តូរទៅចាក់តាម YouTube ផ្ទាល់។');
+            } else {
+              setApiError(null);
+            }
             setTimeout(() => {
               const player = playerRef.current;
               if (player && typeof player.unMute === 'function') {
@@ -726,8 +730,8 @@ export function App() {
                           audioLoaded={audioLoaded}
                           playbackRate={playbackRate}
                           onChangePlaybackRate={handleChangePlaybackRate}
-                          isAutoVocalCutActive={studioEngine.isAutoVocalCutActive}
-                          toggleAutoVocalCut={studioEngine.toggleAutoVocalCut}
+                          isAutoVocalCutActive={!isVocalOn}
+                          toggleAutoVocalCut={toggleVocals}
                           isDeBleedActive={studioEngine.isDeBleedActive}
                           toggleDeBleed={studioEngine.toggleDeBleed}
                           isRecording={studioEngine.isRecording}
