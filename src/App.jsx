@@ -1141,23 +1141,23 @@ export function App() {
                       type="button"
                       onClick={() => micEngine.setMicBoostPreset('full')}
                       className={`py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${
-                        Math.round(micEngine.micVolume * 100) === 180
+                        Math.round(micEngine.micVolume * 100) === 150
                           ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
                       }`}
                     >
-                      180% សំឡេងពេញ
+                      150% សំឡេងពេញ
                     </button>
                     <button
                       type="button"
                       onClick={() => micEngine.setMicBoostPreset('boost')}
                       className={`py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${
-                        Math.round(micEngine.micVolume * 100) === 250
+                        Math.round(micEngine.micVolume * 100) === 200
                           ? 'bg-rose-950 border border-rose-500 text-rose-300 font-bold'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
                       }`}
                     >
-                      250% បំពងខ្លាំង
+                      200% បំពងខ្លាំង
                     </button>
                   </div>
 

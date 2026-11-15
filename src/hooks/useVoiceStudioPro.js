@@ -11,6 +11,10 @@ const SCALES = {
 };
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const safeMicOutputGain = (volume, preamp) => {
+  const safePreamp = Math.max(0.01, Math.min(3, preamp));
+  return Math.min(2, Math.max(0, volume * safePreamp)) / safePreamp;
+};
 
 /**
  * 8 Professional One-Click Voice Presets
@@ -432,8 +436,8 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   const [activePresetId, setActivePresetId] = useState('sweet');
 
   // MODULE 3: Microphone Boost & Dynamic Levels
-  const [micVolume, setMicVolume] = useState(1.8); // 0.0 - 3.0 (0% - 300% Boost)
-  const [micPreampBoost, setMicPreampBoost] = useState(1.5); // 1.0 - 3.0 (Preamp Gain)
+  const [micVolume, setMicVolume] = useState(1.0); // 0.0 - 2.0 digital gain
+  const [micPreampBoost, setMicPreampBoost] = useState(1.0); // Total digital gain is capped at 200%
   const [isAgcActive, setIsAgcActive] = useState(false); // Auto Gain Control
   const [isMonitoring, setIsMonitoring] = useState(true); // Direct Monitoring (Headphones/Speakers)
   const [micChannelMode, setMicChannelMode] = useState('both'); // 'both' (L+R Dual) | 'left' (Ch 1) | 'right' (Ch 2)
@@ -464,7 +468,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   // Studio Echo / Feedback Delay
   const [isEchoOn, setIsEchoOn] = useState(true);
   const [delayTime, setDelayTime] = useState(0.08); // 0.04s - 0.5s
-  const [echoFeedback, setEchoFeedback] = useState(0.20); // 0.0 - 0.65
+  const [echoFeedback, setEchoFeedback] = useState(0.20); // Bounded delay feedback
   const [echoLevel, setEchoLevel] = useState(0.20); // 0.0 - 0.70
 
   // AI Auto-Tune & Pitch Control
@@ -709,7 +713,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
 
       // 2. Pre-Amp Input Gain Boost & AGC
       const preampGain = ctx.createGain();
-      preampGain.gain.value = micPreampBoost;
+      preampGain.gain.value = Math.min(3, Math.max(0.01, micPreampBoost));
       preampGainRef.current = preampGain;
       monoInputGain.connect(preampGain);
 
@@ -801,7 +805,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
 
       // 6. Vocal Pre-amp Volume Gain
       const micGain = ctx.createGain();
-      micGain.gain.value = isMuted ? 0 : micVolume;
+      micGain.gain.value = isMuted ? 0 : safeMicOutputGain(micVolume, micPreampBoost);
       micGainRef.current = micGain;
       compressor.connect(micGain);
 
@@ -840,7 +844,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       echoDamping.frequency.value = 4500;
 
       const feedbackGain = ctx.createGain();
-      feedbackGain.gain.value = isEchoOn ? echoFeedback : 0;
+      feedbackGain.gain.value = isEchoOn ? Math.min(0.5, Math.max(0, echoFeedback)) : 0;
       feedbackGainRef.current = feedbackGain;
 
       const echoWetGain = ctx.createGain();
@@ -909,7 +913,14 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
           kMusicGain.gain.value = 1.0;
           karaokeMusicGainRef.current = kMusicGain;
           kSource.connect(kMusicGain);
-          kMusicGain.connect(ctx.destination);
+          const musicLimiter = ctx.createDynamicsCompressor();
+          musicLimiter.threshold.value = -1;
+          musicLimiter.knee.value = 0;
+          musicLimiter.ratio.value = 20;
+          musicLimiter.attack.value = 0.001;
+          musicLimiter.release.value = 0.05;
+          kMusicGain.connect(musicLimiter);
+          musicLimiter.connect(ctx.destination);
         } catch (e) {
           // Already connected or cross-origin
         }
@@ -1015,11 +1026,11 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       const next = !prev;
       if (micGainRef.current && audioCtxRef.current) {
         const now = audioCtxRef.current.currentTime;
-        micGainRef.current.gain.setTargetAtTime(next ? 0 : micVolume, now, 0.02);
+        micGainRef.current.gain.setTargetAtTime(next ? 0 : safeMicOutputGain(micVolume, micPreampBoost), now, 0.02);
       }
       return next;
     });
-  }, [micVolume]);
+  }, [micVolume, micPreampBoost]);
 
   /**
    * Toggle Headphone / Speaker Direct Monitoring
@@ -1043,12 +1054,12 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
       setMicVolume(1.0);
       setMicPreampBoost(1.0);
     } else if (preset === 'boost') {
-      setMicVolume(2.5);
-      setMicPreampBoost(2.0);
+      setMicVolume(2.0);
+      setMicPreampBoost(1.0);
     } else {
       // 'full'
-      setMicVolume(1.8);
-      setMicPreampBoost(1.5);
+      setMicVolume(1.5);
+      setMicPreampBoost(1.0);
     }
   }, []);
 
@@ -1098,13 +1109,13 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
   useEffect(() => {
     if (micGainRef.current && audioCtxRef.current) {
       const now = audioCtxRef.current.currentTime;
-      micGainRef.current.gain.setTargetAtTime(isMuted ? 0 : micVolume, now, 0.02);
+      micGainRef.current.gain.setTargetAtTime(isMuted ? 0 : safeMicOutputGain(micVolume, micPreampBoost), now, 0.02);
     }
-  }, [micVolume, isMuted]);
+  }, [micVolume, micPreampBoost, isMuted]);
 
   useEffect(() => {
     if (preampGainRef.current && audioCtxRef.current) {
-      preampGainRef.current.gain.setTargetAtTime(micPreampBoost, audioCtxRef.current.currentTime, 0.02);
+      preampGainRef.current.gain.setTargetAtTime(Math.min(3, Math.max(0.01, micPreampBoost)), audioCtxRef.current.currentTime, 0.02);
     }
   }, [micPreampBoost]);
 
@@ -1236,7 +1247,7 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
 
   useEffect(() => {
     if (feedbackGainRef.current && audioCtxRef.current) {
-      feedbackGainRef.current.gain.setTargetAtTime(isEchoOn ? echoFeedback : 0, audioCtxRef.current.currentTime, 0.02);
+      feedbackGainRef.current.gain.setTargetAtTime(isEchoOn ? Math.min(0.5, Math.max(0, echoFeedback)) : 0, audioCtxRef.current.currentTime, 0.02);
     }
     if (echoWetGainRef.current && audioCtxRef.current) {
       echoWetGainRef.current.gain.setTargetAtTime(isEchoOn ? echoLevel : 0, audioCtxRef.current.currentTime, 0.02);
@@ -1254,10 +1265,10 @@ export function useVoiceStudioPro({ karaokeAudioElement = null }) {
         karaokeMusicGainRef.current.gain.setTargetAtTime(Math.min(1.0, musicFactor), now, 0.03);
       }
       if (micGainRef.current && !isMuted) {
-        micGainRef.current.gain.setTargetAtTime(micVolume * Math.min(1.0, micFactor), now, 0.03);
+        micGainRef.current.gain.setTargetAtTime(safeMicOutputGain(micVolume * Math.min(1.0, micFactor), micPreampBoost), now, 0.03);
       }
     }
-  }, [vocalMusicBalance, micVolume, isMuted]);
+  }, [vocalMusicBalance, micVolume, micPreampBoost, isMuted]);
 
   /**
    * Apply 1-Click Professional Voice Preset

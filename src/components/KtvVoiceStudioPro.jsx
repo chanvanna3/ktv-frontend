@@ -474,10 +474,10 @@ export function KtvVoiceStudioPro({
 
               {/* Master Volume & Preamp Boost */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Volume 0 - 300% */}
+                {/* Digital microphone gain is capped at 200% in the audio graph */}
                 <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-purple-300">Microphone Input Volume (0–300%):</span>
+                    <span className="text-purple-300">Microphone Input Gain (0–200%):</span>
                     <span className="font-mono text-purple-400 text-sm">
                       {Math.round(studio.micVolume * 100)}%
                     </span>
@@ -485,7 +485,7 @@ export function KtvVoiceStudioPro({
                   <input
                     type="range"
                     min="0.0"
-                    max="3.0"
+                    max="2.0"
                     step="0.05"
                     value={studio.micVolume}
                     onChange={(e) => studio.setMicVolume(parseFloat(e.target.value))}
@@ -494,8 +494,8 @@ export function KtvVoiceStudioPro({
                   <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                     <span>0% (Mute)</span>
                     <span className="text-slate-400">100% (Standard)</span>
-                    <span className="text-purple-400">200% (High)</span>
-                    <span className="text-pink-400 font-bold">300% (Max Boost)</span>
+                    <span className="text-purple-400">150% (High)</span>
+                    <span className="text-pink-400 font-bold">200% max</span>
                   </div>
                   <p className="text-[10px] text-slate-400">
                     ជួយឱ្យមីក្រូហ្វូនខ្សោយលឺខ្លាំងច្បាស់ល្អ មិនបាច់ស្រែកខ្លាំងពេលច្រៀង។
@@ -950,7 +950,7 @@ export function KtvVoiceStudioPro({
                     <input
                       type="range"
                       min="0"
-                      max="0.60"
+                      max="0.50"
                       step="0.05"
                       value={studio.echoFeedback}
                       disabled={!studio.isEchoOn}
