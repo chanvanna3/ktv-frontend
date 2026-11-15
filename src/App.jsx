@@ -770,6 +770,7 @@ export function App() {
                       <KaraokeLyrics
                         key={selectedVideoId}
                         videoId={selectedVideoId}
+                        transcriptionReady={Boolean(stems.instrumentalUrl)}
                         currentTime={playbackTime}
                         onSeek={handleSeek}
                         videoTitle={videoTitle}

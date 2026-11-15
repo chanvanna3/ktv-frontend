@@ -47,8 +47,28 @@ const isMusicInterludeText = (text) => {
   );
 };
 
+async function transcribeWithWhisper(videoId, language) {
+  const url = apiUrl(`/api/lyrics/${videoId}?force_whisper=true&lang=${encodeURIComponent(language)}`);
+  let response = await fetch(url);
+  if (!response.ok) throw new Error(`Transcribe request failed (${response.status})`);
+  let result = await response.json();
+
+  for (let attempt = 0; result.status === 'processing' && attempt < 300; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    response = await fetch(url);
+    if (!response.ok) throw new Error(`Transcribe status failed (${response.status})`);
+    result = await response.json();
+  }
+
+  if (result.status === 'processing') {
+    return { ...result, status: 'error', message: 'AI Whisper ចំណាយពេលយូរជាងការរំពឹងទុក។ សូមសាកល្បងម្តងទៀត។' };
+  }
+  return result;
+}
+
 export function KaraokeLyrics({
   videoId,
+  transcriptionReady = false,
   currentTime = 0,
   onSeek,
   videoTitle,
@@ -114,7 +134,7 @@ export function KaraokeLyrics({
     setSource(null);
     setError(null);
 
-    if (!videoId) {
+    if (!videoId || !transcriptionReady) {
       setIsLoading(false);
       return;
     }
@@ -123,9 +143,7 @@ export function KaraokeLyrics({
     const fetchLyrics = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(apiUrl(`/api/lyrics/${videoId}?lang=${selectedLang}`));
-        if (!res.ok) throw new Error(`Lyrics fetch failed (${res.status})`);
-        const data = await res.json();
+        const data = await transcribeWithWhisper(videoId, selectedLang);
 
         if (!isCancelled) {
           if (data.status === 'success' && Array.isArray(data.lyrics) && data.lyrics.length > 0) {
@@ -152,7 +170,7 @@ export function KaraokeLyrics({
     return () => {
       isCancelled = true;
     };
-  }, [videoId]);
+  }, [videoId, transcriptionReady]);
 
   // --- PRECISE MILLISECOND TIMESTAMP RESOLVER ---
 
@@ -253,16 +271,15 @@ export function KaraokeLyrics({
   }, [activeIndex, nextSingingIndex, autoScroll]);
 
   const handleManualTranscribe = async () => {
+    if (!transcriptionReady) {
+      setError('រង់ចាំឱ្យ Demucs បង្កើត vocal stem មុនសិន ទើបអាច Transcribe ដោយ Whisper បាន។');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(apiUrl(`/api/lyrics/${videoId}`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ force_whisper: true, language: selectedLang }),
-      });
-      const data = await res.json();
-      if (res.ok && data.status === 'success' && data.lyrics?.length) {
+      const data = await transcribeWithWhisper(videoId, selectedLang);
+      if (data.status === 'success' && data.lyrics?.length) {
         setLyrics(data.lyrics);
         setSource(data.source);
       } else {
@@ -314,7 +331,7 @@ export function KaraokeLyrics({
   };
 
   const handleForceWhisper = async (lang = selectedLang) => {
-    if (!videoId) return;
+    if (!videoId || !transcriptionReady) return;
     setIsSavingLyrics(true);
     const langLabel = lang === 'km' ? 'ភាសាខ្មែរ (Cambodia)' : lang === 'en' ? 'English' : 'Auto';
     setModalStatusMsg({
@@ -322,12 +339,7 @@ export function KaraokeLyrics({
       text: `AI Whisper កំពុងស្តាប់សំឡេងច្រៀង និង Transcribe ជា ${langLabel} (សូមរង់ចាំបន្តិច)...`,
     });
     try {
-      const res = await fetch(apiUrl(`/api/lyrics/${videoId}`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ force_whisper: true, language: lang }),
-      });
-      const data = await res.json();
+      const data = await transcribeWithWhisper(videoId, lang);
       if (data.status === 'success' && Array.isArray(data.lyrics) && data.lyrics.length > 0) {
         setLyrics(data.lyrics);
         setSource(data.source);
@@ -352,12 +364,7 @@ export function KaraokeLyrics({
     if (!videoId) return;
     setIsLoading(true);
     try {
-      const res = await fetch(apiUrl(`/api/lyrics/${videoId}`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ force_whisper: true, language: newLang }),
-      });
-      const data = await res.json();
+      const data = await transcribeWithWhisper(videoId, newLang);
       if (data.status === 'success' && Array.isArray(data.lyrics) && data.lyrics.length > 0) {
         setLyrics(data.lyrics);
         setSource(data.source);
@@ -442,6 +449,7 @@ export function KaraokeLyrics({
             <select
               value={selectedLang}
               onChange={(e) => handleLanguageSwitch(e.target.value)}
+              disabled={!transcriptionReady || isLoading}
               className="bg-transparent text-pink-300 font-bold text-[11px] sm:text-xs focus:outline-none cursor-pointer"
             >
               <option value="km" className="bg-slate-900 text-slate-100">🇰🇭 ខ្មែរ (KH)</option>
@@ -711,7 +719,8 @@ export function KaraokeLyrics({
                   </button>
                   <button
                     onClick={handleManualTranscribe}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs transition-all border border-slate-700 cursor-pointer"
+                    disabled={!transcriptionReady || isLoading}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs transition-all border border-slate-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-pink-400" />
                     <span>Transcribe ដោយ AI Whisper</span>
@@ -797,7 +806,7 @@ export function KaraokeLyrics({
 
                 <button
                   onClick={() => handleForceWhisper(selectedLang)}
-                  disabled={isSavingLyrics}
+                  disabled={isSavingLyrics || !transcriptionReady}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-all cursor-pointer border border-slate-700 disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isSavingLyrics ? 'animate-spin' : ''}`} />
