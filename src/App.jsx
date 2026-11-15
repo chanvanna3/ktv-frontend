@@ -60,6 +60,8 @@ export function App() {
   const searchSectionRef = useRef(null);
   const playerSectionRef = useRef(null);
   const pollingTimerRef = useRef(null);
+  const pollingStartedAtRef = useRef(0);
+  const pollingFailureCountRef = useRef(0);
   const directAudioUrlRef = useRef(null);
 
   // Layer Management (Drag & Drop, Reorder, Tabs & Dropdown, Edit)
@@ -269,6 +271,8 @@ export function App() {
     setProcessingProgress(15);
     setProcessingStage('downloading');
     setProcessingMessage('កំពុងទាញយកសំឡេងពី YouTube...');
+    pollingStartedAtRef.current = Date.now();
+    pollingFailureCountRef.current = 0;
 
     // Pause video while processing so unseparated audio never plays
     pauseVideo();
@@ -309,12 +313,42 @@ export function App() {
       }
 
       // Case B: Background separation job in progress -> Poll /api/status/{videoId} every 1.5s
+      const stopPollingWithError = (message) => {
+        if (pollingTimerRef.current) clearInterval(pollingTimerRef.current);
+        pollingTimerRef.current = null;
+        setIsProcessing(false);
+        setApiError(message);
+        setTimeout(() => {
+          const player = playerRef.current;
+          if (player && typeof player.unMute === 'function') {
+            try { player.unMute(); player.setVolume(100); player.playVideo(); } catch (e) {}
+          }
+        }, 300);
+      };
+
       pollingTimerRef.current = setInterval(async () => {
         try {
           const pollRes = await fetch(apiUrl(`/api/status/${videoId}`));
-          if (!pollRes.ok) return;
+          if (!pollRes.ok) {
+            pollingFailureCountRef.current += 1;
+            if (pollingFailureCountRef.current >= 12) {
+              stopPollingWithError('មិនអាចភ្ជាប់ទៅម៉ាស៊ីនកាត់សំឡេងបានទេ។ សូមសាកល្បងម្តងទៀត។');
+            }
+            return;
+          }
 
           const pollData = await pollRes.json();
+          pollingFailureCountRef.current = 0;
+
+          if (pollData.status === 'idle') {
+            stopPollingWithError('ម៉ាស៊ីន backend បាត់បង់ស្ថានភាពការងារ។ សូមជ្រើសរើសបទម្តងទៀត។');
+            return;
+          }
+
+          if (pollData.stage === 'downloading' && Date.now() - pollingStartedAtRef.current > 180000) {
+            stopPollingWithError('ទាញយកសំឡេងលើ Cloud លើស ៣ នាទី។ YouTube អាចកំពុងរារាំងបទនេះ។ សូមសាកល្បងម្តងទៀតពេលក្រោយ។');
+            return;
+          }
 
           if (pollData.direct_audio_url) {
             directAudioUrlRef.current = apiUrl(pollData.direct_audio_url);
@@ -357,29 +391,18 @@ export function App() {
             setIsVocalOn(false); // Pure instrumental karaoke!
             setIsProcessing(false); // Dismiss overlay modal and auto-start
           } else if (pollData.status === 'error') {
-            clearInterval(pollingTimerRef.current);
-            pollingTimerRef.current = null;
-            setIsProcessing(false);
-            // Notice: If YouTube flagged the datacenter IP, inform user clearly
-            console.warn('Backend separation notice, falling back to direct YouTube playback:', pollData.error);
-            if (pollData.error && (pollData.error.includes('bot') || pollData.error.includes('Sign in'))) {
-              setApiError('YouTube Bot Notice: YouTube តម្រូវឱ្យផ្ទៀងផ្ទាត់ Bot លើ Cloud Server Render សម្រាប់បទនេះ។ កំពុងប្តូរទៅចាក់តាម YouTube ផ្ទាល់។');
-            } else {
-              setApiError(null);
-            }
-            setTimeout(() => {
-              const player = playerRef.current;
-              if (player && typeof player.unMute === 'function') {
-                try {
-                  player.unMute();
-                  player.setVolume(100);
-                  player.playVideo();
-                } catch (e) {}
-              }
-            }, 300);
+            console.warn('Backend separation failed; falling back to direct YouTube playback:', pollData.error);
+            const botBlocked = /bot|sign in|confirm you.re not a bot/i.test(pollData.error || '');
+            stopPollingWithError(botBlocked
+              ? 'YouTube បានរារាំង Cloud server មិនឱ្យទាញយកសំឡេងបទនេះ។ បទនឹងចាក់ផ្ទាល់ពី YouTube ប៉ុន្តែមិនអាចបំបែកភ្លេងដោយ AI បានទេ។'
+              : `ការកាត់សំឡេងមិនជោគជ័យ៖ ${pollData.message || pollData.error || 'កំហុសមិនស្គាល់'}`);
           }
         } catch (e) {
           console.warn('Polling error:', e);
+          pollingFailureCountRef.current += 1;
+          if (pollingFailureCountRef.current >= 12) {
+            stopPollingWithError('ការតភ្ជាប់ទៅម៉ាស៊ីនកាត់សំឡេងបានផ្អាក។ សូមពិនិត្យអ៊ីនធឺណិត ហើយសាកល្បងម្តងទៀត។');
+          }
         }
       }, 1500);
 
