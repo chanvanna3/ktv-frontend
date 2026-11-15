@@ -134,6 +134,7 @@ export function KaraokeLyrics({
           } else {
             setLyrics([]);
             setSource(null);
+            setError(data.message || 'មិនមានអត្ថបទចម្រៀងសម្រាប់បទនេះទេ។');
           }
         }
       } catch (err) {
@@ -255,16 +256,20 @@ export function KaraokeLyrics({
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(apiUrl(`/api/lyrics/${videoId}`));
+      const res = await fetch(apiUrl(`/api/lyrics/${videoId}`), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force_whisper: true, language: selectedLang }),
+      });
       const data = await res.json();
-      if (data.status === 'success' && data.lyrics) {
+      if (res.ok && data.status === 'success' && data.lyrics?.length) {
         setLyrics(data.lyrics);
         setSource(data.source);
       } else {
-        setError('រកមិនឃើញអត្ថបទចម្រៀងសម្រាប់បទនេះឡើយ។');
+        setError(data.message || 'AI Transcribe មិនអាចបង្កើតអត្ថបទសម្រាប់បទនេះបានទេ។');
       }
     } catch (e) {
-      setError('ការទាញយកអក្សរចម្រៀងបរាជ័យ។');
+      setError('ការភ្ជាប់ទៅ AI Transcribe បរាជ័យ។ សូមសាកល្បងម្តងទៀត។');
     } finally {
       setIsLoading(false);
     }
@@ -329,9 +334,10 @@ export function KaraokeLyrics({
         setModalStatusMsg({ type: 'success', text: `AI Whisper Transcribe ជា ${langLabel} ជោគជ័យ!` });
         setTimeout(() => setIsEditModalOpen(false), 900);
       } else {
+        setError(data.message || 'AI Transcribe មិនអាចបង្កើតអត្ថបទបានទេ។');
         setModalStatusMsg({
           type: 'error',
-          text: 'AI Whisper រកមិនឃើញពាក្យច្រៀងច្បាស់លាស់។ សូម Copy ទំនុកច្រៀងមក Paste ជំនួសវិញ!',
+          text: data.message || 'AI Transcribe failed. You can paste lyrics manually.',
         });
       }
     } catch (e) {
@@ -355,6 +361,9 @@ export function KaraokeLyrics({
       if (data.status === 'success' && Array.isArray(data.lyrics) && data.lyrics.length > 0) {
         setLyrics(data.lyrics);
         setSource(data.source);
+        setError(null);
+      } else {
+        setError(data.message || 'មិនអាច Transcribe ជាភាសានេះបានទេ។');
       }
     } catch (e) {
       console.warn('Language switch notice:', e);
@@ -463,6 +472,11 @@ export function KaraokeLyrics({
 
       {isExpanded && (
         <div className="p-3 sm:p-5 space-y-3 sm:space-y-4">
+          {error && (
+            <div role="status" className="rounded-xl border border-amber-500/40 bg-amber-950/40 px-4 py-3 text-sm text-amber-200">
+              {error}
+            </div>
+          )}
           {/* Sub-bar: View Mode Switcher (Stage vs List vs Both) for Phones */}
           <div className="flex items-center justify-between text-xs px-1 text-slate-400">
             <span className="text-[11px] font-semibold text-slate-300">

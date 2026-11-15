@@ -301,8 +301,8 @@ export function App() {
       // Case A: Song was already processed (100% Cached)
       if (initialData.status === 'completed' && initialData.instrumental_url) {
         if (initialData.title) setVideoTitle(initialData.title);
-        setProcessingProgress(100);
-        setProcessingStage('completed');
+        setProcessingProgress(initialData.progress ?? 100);
+        setProcessingStage(initialData.stage || 'completed');
         setStems({
           instrumentalUrl: apiUrl(initialData.instrumental_url),
           vocalsUrl: apiUrl(initialData.vocals_url),
@@ -381,8 +381,8 @@ export function App() {
                 }
               } catch (e) {}
             }
-            setProcessingProgress(100);
-            setProcessingStage('completed');
+            setProcessingProgress(pollData.progress ?? 100);
+            setProcessingStage(pollData.stage || 'completed');
 
             setStems({
               instrumentalUrl: apiUrl(pollData.instrumental_url),
@@ -432,7 +432,7 @@ export function App() {
       const res = await fetch(apiUrl(`/api/status/${selectedVideoId}`));
       if (res.ok) {
         const data = await res.json();
-        if (data.instrumental_url) {
+        if (data.status === 'completed' && data.instrumental_url) {
           setStems({
             instrumentalUrl: apiUrl(data.instrumental_url),
             vocalsUrl: data.vocals_url ? apiUrl(data.vocals_url) : null,
@@ -442,6 +442,11 @@ export function App() {
           setIsInstantCutLoading(false);
           setIsProcessing(false);
           playVideo();
+          return;
+        }
+        if (data.status === 'error') {
+          setApiError(data.message || 'ការកាត់សំឡេងមិនជោគជ័យ។');
+          setIsInstantCutLoading(false);
           return;
         }
       }
@@ -455,7 +460,7 @@ export function App() {
         const res = await fetch(apiUrl(`/api/status/${selectedVideoId}`));
         if (res.ok) {
           const data = await res.json();
-          if (data.instrumental_url) {
+          if (data.status === 'completed' && data.instrumental_url) {
             clearInterval(pollInterval);
             setIsInstantCutLoading(false);
             setStems({
@@ -468,12 +473,19 @@ export function App() {
             playVideo();
             return;
           }
+          if (data.status === 'error') {
+            clearInterval(pollInterval);
+            setIsInstantCutLoading(false);
+            setApiError(data.message || 'ការកាត់សំឡេងមិនជោគជ័យ។');
+            return;
+          }
         }
       } catch (e) {}
 
       if (attempts >= 25) {
         clearInterval(pollInterval);
         setIsInstantCutLoading(false);
+        setApiError('មិនទទួលបានឯកសារភ្លេងដែលបានបំបែកទេ។ សូមចាប់ផ្តើមដំណើរការម្តងទៀត។');
       }
     }, 1000);
   }, [selectedVideoId, playVideo, setAudioMode, setIsVocalOn]);
@@ -787,8 +799,9 @@ export function App() {
                           audioLoaded={audioLoaded}
                           playbackRate={playbackRate}
                           onChangePlaybackRate={handleChangePlaybackRate}
-                          isAutoVocalCutActive={!isVocalOn}
-                          toggleAutoVocalCut={toggleVocals}
+                          isAutoVocalCutActive={Boolean(stems.instrumentalUrl)}
+                          isAutoVocalCutLoading={isInstantCutLoading}
+                          toggleAutoVocalCut={handleStartInstantAutoVocalCut}
                           isDeBleedActive={studioEngine.isDeBleedActive}
                           toggleDeBleed={studioEngine.toggleDeBleed}
                           isRecording={studioEngine.isRecording}
@@ -1417,17 +1430,18 @@ export function App() {
                   <div>
                     <h4 className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-purple-400" />
-                      <span>Auto Vocal Cut (0s)</span>
+                      <span>Demucs AI Vocal Removal</span>
                     </h4>
-                    <p className="text-[10px] text-slate-400">កាត់សំឡេងច្រៀងភ្លាមៗ 0 វិនាទី</p>
+                    <p className="text-[10px] text-slate-400">{stems.instrumentalUrl ? 'Validated stems ready.' : 'Check the Demucs processing result.'}</p>
                   </div>
                   <button
-                    onClick={studioEngine.toggleAutoVocalCut}
+                    onClick={handleStartInstantAutoVocalCut}
+                    disabled={isInstantCutLoading}
                     className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
-                      studioEngine.isAutoVocalCutActive ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'
+                      stems.instrumentalUrl ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'
                     }`}
                   >
-                    {studioEngine.isAutoVocalCutActive ? 'ON' : 'OFF'}
+                    {isInstantCutLoading ? 'CHECKING' : stems.instrumentalUrl ? 'READY' : 'CHECK'}
                   </button>
                 </div>
 

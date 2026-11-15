@@ -49,6 +49,7 @@ export function KaraokeControls({
   onChangePlaybackRate,
   // Auto Vocal Cut
   isAutoVocalCutActive,
+  isAutoVocalCutLoading = false,
   toggleAutoVocalCut,
   // De-Bleed filter
   isDeBleedActive,
@@ -105,7 +106,7 @@ export function KaraokeControls({
           {/* Mode Badge */}
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 shadow-sm">
             <Sparkles className="w-3 h-3 text-emerald-400" />
-            AI High-Precision (95%+ Vocal Cut)
+            {audioLoaded ? 'Validated Demucs Stems Active' : 'AI Vocal Stems Not Ready'}
           </span>
         </div>
 
@@ -851,24 +852,23 @@ export function KaraokeControls({
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
                     <Zap className="w-4 h-4 text-purple-400" />
-                    <span>Auto Vocal Cut</span>
+                    <span>Demucs AI Vocal Removal</span>
                   </div>
                   {toggleAutoVocalCut && (
                     <button
                       onClick={toggleAutoVocalCut}
+                      disabled={isAutoVocalCutLoading}
                       className={`text-[10px] px-2 py-0.5 rounded-full border font-bold cursor-pointer transition-all ${
                         isAutoVocalCutActive
                           ? 'bg-purple-950 border-purple-500 text-purple-300 shadow-sm'
                           : 'bg-slate-800 border-slate-700 text-slate-400'
                       }`}
                     >
-                      {isAutoVocalCutActive ? 'ON' : 'OFF'}
+                      {isAutoVocalCutLoading ? 'CHECKING' : isAutoVocalCutActive ? 'READY' : 'CHECK'}
                     </button>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  កាត់សំឡេងច្រៀងអូតូភ្លាមៗ <strong>0 វិនាទី</strong> (Phase Inversion) ច្រៀងបានភ្លាមដោយមិនបាច់ចាំ AI បំបែកភ្លេងយូរ។
-                </p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">Shows whether validated Demucs AI vocal and instrumental stems are ready. Select Check to confirm the backend result.</p>
               </div>
             </div>
 
@@ -878,7 +878,7 @@ export function KaraokeControls({
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    <span>AI De-Bleed Filter</span>
+                    <span>Vocal Residue EQ</span>
                   </div>
                   {toggleDeBleed && (
                     <button
